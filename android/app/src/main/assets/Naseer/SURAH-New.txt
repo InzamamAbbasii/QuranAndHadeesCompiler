@@ -1,0 +1,349 @@
+
+#,Traditional Sura No,Name,# Of verses,Place of Revelation,Chronological Order
+	  
+A
+1,6,Anam,165,Mecca,55
+2,7,A'Raf,206,Mecca,39
+3,8,Anfal,75,Madina,88
+4,21,Anbiya,112,Mecca,73
+5,29,Ankabut,69,Mecca,85
+6,33,Ahzab,73,Madina,90
+7,46,Ahgaf,35,Mecca,66
+8,80,Abasa,42,Mecca,24
+9,87,A'la,19,Mecca,8
+10,96,Alaq,19,Mecca,1
+11,100,Aadiyat,11,Mecca,14
+12,103,Asr,3,Mecca,13
+13,107,Alma'un,7,Mecca,17
+
+B
+1,2,Baqarah,286,Madina,87
+2,17,Bani Israil,111,Mecca,50
+3,85,Buruj,22,Mecca,27
+4,90,Balad,20,Mecca,35
+5,98,Beyinnah,8,Madina,100
+
+D
+1,44,Dukhan,59,Mecca,64
+2,51,Dhariyat,60,Mecca,67
+3,76,Dahr,31,Madina,98
+4,93,Duha,11,Mecca,11
+
+     
+F
+1,1,Fatehah,7,Mecca,5  
+2,25,Farqan,77,Mecca,42
+3,35,Fatir,45,Mecca,43
+4,48,Fath,29,Madina,111
+5,89,Fajr,30,Mecca,10
+6,105,Fil,5,Mecca,19
+7,113,Falaq,5,Mecca,20
+ 
+G
+1,88,Ghashiya,26,Mecca,68
+
+H
+1,11,Hud,123,Mecca,52
+2,15,Hijr,99,Mecca,54
+3,22,Hajj,78,Madina,103
+4,41,Hamim Sajdah,54,Mecca,61
+5,49,Hujurat,18,Madina,106
+6,57,Hadid,29,Madina,94
+7,59,Hashr,24,Madina,101
+8,69,Haqqah,52,Mecca,78
+9,104,Humazah,62,Mecca,32
+
+I
+1,3,Imran,200,Madina,89
+2,14,Ibrahim,52,Mecca,72
+3,82,Infitar,19,Mecca,82
+4,84,Inshiqaq,25,Mecca,83
+5,94,Inshira,8,Mecca,12
+6,112,Iklas,4,Mecca,22
+    
+J
+1,45,Jathiyah,37,Mecca,65
+2,62,Jumah,11,Madina,110
+3,72,Jinn,28,Mecca,40
+
+K
+1,18,Kahf,110,Mecca,69
+2,108,Kauthar,3,Mecca,15
+3,109,Kafirun,6,Mecca,18
+
+L
+1,31,Luqman,34,Mecca,57
+2,92,Leyl,21,Mecca,9
+3,111,Lahab,5,Mecca,6
+
+M
+1,5,Maidah,120,Madina,112
+2,19,Maryam,98,Mecca,44
+3,23,Muminun,118,Mecca,74
+4,40,Mumin,85,Mecca,60
+5,47,Muhammad,38,Madina,95
+6,58,Mujadila,22,Madina,105
+7,60,Mumtahana,13,Madina,91	
+8,63,Munafiqun,11,Madina,104
+9,67,Mulk,30,Mecca,77
+10,70,Maarij,44,Mecca,79
+11,73,Muzammil,20,Mecca,3
+12,74,Mudashir,56,Mecca,4
+13,77,Mursalat,50,Mecca,33 
+
+
+N
+1,4,Nisa,176,Madina,92
+2,16,Nahi,128,Mecca,70
+3,24,Nur,64,Madina,102
+4,27,Naml,93,Mecca,48
+5,53,Najm,62,Mecca,23
+6,71,Noah,28,Mecca,71
+7,78,Naba,40,Mecca,80
+8,79,Naziat,46,Mecca,81
+9,110,Nasr,3,Madina,114
+10,114,Nas,6,Mecca,21
+
+Q
+1,28,Qasas,88,Mecca,49
+2,50,Q'af,45,Mecca,34
+3,54,Qamr,55,Mecca,37
+4,68,Qalam,52,Mecca,2
+5,75,Qiyamah,40,Mecca,31
+6,97,Qadr,5,Mecca,25
+7,101,Qariah,11,Mecca,30
+8,106,Qureysh,4,Mecca,29
+
+                        R
+ 1       13             Ra'd              43           Madina        96
+ 2       30             Rum               60           Mecca         84
+ 3       55             Rahman            78           Madina        97
+
+                        S 
+ 1       26             Shuara           227           Mecca         47
+ 2       32             Sajdah            30           Mecca         75
+ 3       34             Saba              54           Mecca         58
+ 4       37             Saffat           182           Mecca         56
+ 5       38             Sad               88           Mecca         38
+ 6       42             Shura             53           Mecca         62
+ 7       61             Saff              14           Madina       109
+ 8       91             Shams             15           Mecca         26
+
+                        T
+ 1        9             Taubah           129           Madina       113
+ 2       20             Ta Ha            135           Mecca         45
+ 3       52             Tur               49           Mecca         76
+ 4       64             Taghabun          18           Madina       108 
+ 5       65             Talaq             12           Madina        99
+ 6       66             Tahrim            12           Madina       107
+ 7       81             Takwir            29           Mecca          7
+ 8       83             Tatfif            36           Mecca         86
+ 9       86             Tariq             17           Mecca         36
+10       95             T'in               8           Mecca         28
+11      102             Takatur            8           Mecca         16
+
+                        W
+ 1       56             Waqiah            96           Mecca         46
+
+			Y
+ 1       10             Yunus            109           Mecca         51
+ 2       12             Yousuf           111           Mecca         53
+ 3       36             Ya'sin            83           Mecca         41
+
+			Z
+ 1       39             Zumar             75           Mecca         59
+ 2       43             Zukhruf           89           Mecca         63
+ 3       99             Zilzal             8           Madina        93
+
+			***********
+
+			THE INDEX  IN THE
+
+			TRADITIONAL ORDER
+
+       -----------------------------------------------------------
+       Traditional Sura Nos. *   Name of Sura  *    No. of verses 
+       -----------------------------------------------------------	
+		
+	        1. 		 Fatehah                     7
+	        2. 		 Al-Baqarah                286
+	        3.               Al-Imran                  200
+	        4.		 Al-Nisa		   176
+	        5.		 Al-Maidah		   120
+		6.		 Al-Anam	           165
+		7.		 Al-A'Raf 		   206
+		8.		 Al-Anfal		    75
+		9.		 Al-Taubah		   129
+	       10.		 Yunus 			   109
+	       11.		 Hud			   123
+	       12.		 Yousuf			   111
+	       13.		 Al-Ra'd   		    43 
+	       14.		 Ibhrahim		    52
+	       15.		 Al-Hijr		    99
+	       16.		 Al-Nahl 		   128
+               17.	 	 Bani Israil		   111
+	       18.		 Al-Kahf	           110
+	       19		 Maryam		            98 
+	       20.		 Ta Ha			   135
+	       21.		 Al-Anbiya                 112     
+	       22.		 Al-Hajj  		    78
+	       23.		 Al-Muminun		   118
+	       24.		 Al-Nur			    64
+	       25.		 Al-Farqan		    77
+	       26.		 Ash-Shuara		   226
+	       27.		 Al-Naml		    93
+	       28.		 Al-Qasas		    88
+	       29. 		 Al-Ankabut		    69
+	       30.		 Al-Rum		            60
+	       31.		 Luqman			    34
+               32.		 As-Sajdah		    30
+	       33.		 Al-Ahzab  	            73
+	       34.		 Al-Saba		    54
+	       35.		 Al-Fatir	       	    45
+	       36.		 Ya'sin			    83
+	       37.		 As-Saffat		   182
+	       38.		 Sad			    88
+	       39.		 Az-Zamar		    75	
+	       40.		 Al-Mumin 		    85
+	       41.		 Hamim Sajdah		    54
+	       42.		 Ash-Shura		    53
+	       43.		 Al-Aukhruf		    89
+	       44.		 Al-Dukhan		    59
+	       45.		 Al-Jathiyah		    37
+	       46.		 Al-Ahqaf		    35
+	       47.		 Muhammad	            38
+	       48.		 Al-Fath		    29
+	       49.		 Al-Hujurat		    18
+	       50.		 Q'af			    45
+	       51.		 Al-Dhariyat		    60
+	       52.		 Al-Tur			    49
+	       53.		 Al-Najm		    62
+	       54.		 Al-Qamr		    55
+	       55.		 Ar-Rahman		    78
+	       56.		 Al-Waqiah		    96
+	       57.		 Al-Hadid		    29
+	       58.		 Al-Mujadila		    22
+	       59.		 Al-Hashr		    24
+	       60.		 Al-Mumtahana		    13
+	       61.		 As-Saff		    14
+	       62.		 Al-Jumah		    11
+	       63. 		 Al-Munafiqun		    11
+	       64		 Al-Taghabun		    18
+	       65.  	   	 Al-Talaq		    12
+	       66.   		 Al-Tahrim		    12
+	       67.		 Al-Mulk 		    30
+	       68. 		 Al-Qalam		    52	
+	       69.		 Al-Haqqah		    52	
+	       70.               Al-Maarij		    44
+	       71.		 Noah			    28
+	       72.		 Al-J'nn		    28
+	       73.		 Al-Muzammil		    20
+	       74.		 Al-Mudashir		    56
+	       75.		 Al-Qiyamah		    40
+	       76.		 Al-Dahr		    31
+	       77.		 Al-Mursalat		    50
+	       78.		 Al-Naba		    40
+	       79.		 Al-Naziat		    46
+	       80.		 Abasa			    42
+	       81.		 Al-Takwir		    29
+	       82.		 Al-Infitar		    19
+	       83.		 Al-Tatfif		    36
+	       84.		 Al-Inshiqaq		    25
+	       85.		 Al-Bhruj		    22
+	       86.		 Al-Tariq		    17
+	       87.		 Al-A'la		    19
+               88.		 Al-Ghashiya		    26
+	       89.		 Al-Fajr		    30
+	       90.		 Al-Balad		    20
+	       91.		 Ash-Shams		    15
+	       92.		 Al-Leyl		    21
+	       93.		 Al-Duha		    11
+	       94.		 Al-Inshira		     8
+	       95.		 Al-T'in		     8
+	       96.		 Al-Alaq		    19
+	       97.		 Al-Qadr		     5
+	       98.		 Al-Beyinnah		     8
+	       99.		 Al-Zilzal		     8
+	      100.		 Al-Aadiyat		    11
+	      101.		 Al-Qariah		    11
+	      102.		 Al-Takatur		     8
+	      103.		 Al-Asr		             3
+	      104.		 Al-Humazah		     9
+	      105.		 Al-Fil		             5
+	      106.		 Al-Qureysh		     4
+	      107.		 Alma'un		     7
+	      108.		 Al-Kauthar		     3
+	      109.		 Al-Kafirun		     6
+	      110.		 Al-Nasr		     3
+	      111.		 Al-Lahab		     5
+	      112. 		 Al-Lklas		     4
+	      113.		 Al-Falaq		     5
+	      114.    		 Al-Nas			     6
+
+
+IMPORTANT:-
+---------
+(1)  	According to traditional practice only the first BISMILLAH before
+        Sura `Fathiha' is counted as a verse.  And all other "Bismillahs"
+        are treated as `Headings' for various Suras and therefore not 
+	counted as verses.
+		
+(2)     Sura 9 does not commence with Bismillah.
+
+(3)     Caution: The traditional Sura Nos. will tally in all copies 
+	of the Quran.  But in some translations the `Verse Nos' have
+	been changed by splitting the verse into two or three parts
+	and sometimes in the translations all the Bismillahs are 
+	given Verse Nos. The correct No. of Suras and the Correct
+	No. of verses in each Sura as per the accepted traditional
+	version is given in this pamplet.
+
+(4) 	Total No. of Suras 114 
+	Total No. of Meccan Suras   86
+	Total No. of Madinan Suras  28
+
+(5)     Total No. of Verses 6239
+
+The place of revelation - Mecca or Madina -  is given as per the Holy
+Quran Copy Printed at Kind Fahd Printing Complex Madina, Saudi Arabia.
+
+IMPORTANT:
+========
+
+May the Almighty give guidance to Muslims to read Quran and follow the guidelines given there in.  This alone will pull Muslims out of their present state of their present state state of decadence, Disunity, selfishness and impoverishment.
+	
+"It is the duty of every Muslim, man, woman, or child to read the and understand it according to their own capacity.  If any one of us attains to some knowledge or understanding of it by study, contemplation and test of life, both outward and inward, it is his duty, according to  his capcity to instruct others and share with them the joy and peace which results from contact with the spiritual world."
+   - ABDULLAH YUSUF ALI
+
+			SAJDA THILAVATH AYATHS
+-------------------------------------------------------------------------
+SERIAL NO. *>---------SURA NAME---------<*    SURA NO. *    AYATH NO.
+------------------------------------------------------------------------
+  1 		Al A'Raf			 7	       206
+  2 		Al Ra'd				13		15
+  3		Al Nahl				16		50
+  4		Bani Israil			17	       109
+  5		Maryam				19		58
+  6	        Al Haj				22		18
+  7		Al Haj				22		77 Shafi
+  8		Al Farqan			25		60
+  9		Al Naml				27		26
+ 10		As Sajdah			32		15
+ 11		Sa'd				38		24 Hanafi 
+ 12		Hamim Sajdah			41		38
+ 13		Al-Najm				53		62
+ 14		Inshiqaq			84		21
+ 15		Al Alaq				96		19
+-------------------------------------------------------------------------
+           Sajda Wajib for Shafi at 22:77
+	   Sajda Wajib for Hanafi at 38:24 
+	   Other 13 Places : Wajib for both.
+-------------------------------------------------------------------------
+            "In Allah let Believers
+	     Put their trust."                       - Holy Quran
+-------------------------------------------------------------------------
+
+
+
+
+

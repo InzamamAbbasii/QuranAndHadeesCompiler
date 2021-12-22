@@ -1,0 +1,75 @@
+  const ReadQuran = async () => {
+    RNFS.readFileAssets('YUSUFALI.TXT').then((res) => {
+      // console.log('read file res: ', res); 
+      console.log('..................................');
+      // let newFile = res.match('/\d+/g');
+      console.log(res);
+      //  console.log(newFile);
+
+      //  newFile.forEach(element => {
+      //    console.log(element);
+      //  });
+      // let data = [];
+      // for (let index = 25; index < 29; index++) {
+      //   const element = newFile[index];
+      //   // console.log(index,element);
+      //   //  if(element.includes('CHAPTER NO.'))
+      //   //  console.log(index,element);
+      //   if (newFile[index].length > 1) {
+      //     if (element.match(/^\d/)) {
+      //       // Return true
+      //       data.push(element);
+      //       // console.log('start with number',element);
+      //     } else {
+      //       // Return false
+      //       if (element.includes('CHAPTER NO.')) {
+      //         data.push(element);
+      //       } else {
+      //         // data.push(element);
+      //         // let array = ['001.007  The way of tho','(portion) is not wrath, and who go not astray.'];
+      //         // // array[2]=array[0]+array[1];
+      //         // array.push(array[0]+array[1])
+      //         // array.forEach((element,index) => {
+      //         //   console.log(index,element);
+      //         // });
+
+      //         // console.log(newFile[27]+' '+element);
+      //         let i = data.length;
+      //         // data[i]=newFile[index-1]+''+newFile[index];
+
+
+      //         data.push(element);
+
+
+
+              
+      //         // data.push(newFile[index-1]+newFile[index])
+      //         // data.forEach((element,index) => {
+      //         //   console.log(index,element);
+      //         // });
+               
+      //         // data.push(element);
+
+      //         // data.push(newFile[index - 1] + newFile[index]);
+      //       }
+      //       // console.log('Not start with number',element);
+      //     }
+      //   }
+      // }
+      // data.forEach((element, index) => {
+      //   console.log(index, element.length,element);
+      // });
+
+      //  for (let index = 0; index < res.length; index++) {
+      //    const element = res[index];
+      //    console.log(res[index]);
+      //  }
+      //  let reg = /[0-9][0-9][0-9].[0-9][0-9][0-9]/g;
+      //  let result  = res.match(reg);
+      // //  result  = reg.exec(res);
+      //  console.log(result.values);
+
+      // navigation.navigate('Quran',{ data:res});
+    });
+    console.log(';;;end;;;');
+  }

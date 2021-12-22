@@ -58,8 +58,8 @@ const Search = () => {
         return item.HEnglish.toString().toLowerCase().includes(text.toLowerCase());
       });
       setData(newFilterData);
-    
-    }else{
+
+    } else {
       setData(dataCopy);
     }
     setSearchArray(text);
@@ -69,7 +69,51 @@ const Search = () => {
 
     <View style={styles.container}>
       <TextInput style={styles.input} onChangeText={(text) => searchWord(text)} placeholder={'search here...'} placeholderTextColor={'gray'} />
-      <FlatList
+      <View style={{ flex: 1, width: '97%', alignSelf: 'center', padding: 10, borderRadius: 8, elevation: 5, marginBottom: 20, justifyContent: 'center', backgroundColor: '#fff' }}>
+        <View
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: 'green' }}>Suran No 1,</Text>
+          <Text style={{ fontSize: 20, color: 'green' }}>Ayat No 1</Text>
+        </View>
+        <Text style={{ fontSize: 18, }}>In the name of God, Most Gracious, Most Merciful.</Text>
+      </View>
+      <View style={{ flex: 1, width: '97%', alignSelf: 'center', padding: 10, borderRadius: 8, elevation: 5, marginBottom: 20, justifyContent: 'center', backgroundColor: '#fff' }}>
+        <View
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: 'green' }}>Suran No 1,</Text>
+          <Text style={{ fontSize: 20, color: 'green' }}>Ayat No 2</Text>
+        </View>
+        <Text style={{ fontSize: 18, }}> Praise be to God, the Cherisher and Sustainer of the world;</Text>
+      </View>
+      
+      <View style={{ flex: 1, width: '97%', alignSelf: 'center', padding: 10, borderRadius: 8, elevation: 5, marginBottom: 20, justifyContent: 'center', backgroundColor: '#fff' }}>
+        <View
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: 'green' }}>Suran No 1,</Text>
+          <Text style={{ fontSize: 20, color: 'green' }}>Ayat No 3</Text>
+        </View>
+        <Text style={{ fontSize: 18, }}>  Most Gracious, Most Merciful;</Text>
+      </View>
+     
+      <View style={{ flex: 1, width: '97%', alignSelf: 'center', padding: 10, borderRadius: 8, elevation: 5, marginBottom: 20, justifyContent: 'center', backgroundColor: '#fff' }}>
+        <View
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: 'green' }}>Suran No 1,</Text>
+          <Text style={{ fontSize: 20, color: 'green' }}>Ayat No 4</Text>
+        </View>
+        <Text style={{ fontSize: 18, }}>  Master of the Day of Judgment.</Text>
+      </View>
+      <View style={{ flex: 1, width: '97%', alignSelf: 'center', padding: 10, borderRadius: 8, elevation: 5, marginBottom: 20, justifyContent: 'center', backgroundColor: '#fff' }}>
+        <View
+          style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <Text style={{ fontSize: 20, color: 'green' }}>Suran No 1,</Text>
+          <Text style={{ fontSize: 20, color: 'green' }}>Ayat No 5</Text>
+        </View>
+        <Text style={{ fontSize: 18, }}> Thee do we worship, and Thine aid we seek.</Text>
+      </View>
+
+
+      {/* <FlatList
         data={data}
         keyExtractor={(item, index) => index}
         renderItem={(item, index) =>
@@ -82,7 +126,7 @@ const Search = () => {
             />
           </View>
         }
-      />
+      /> */}
     </View>
   );
 }

@@ -10,7 +10,8 @@ import Search from './screens/Search';
 import SearchIndexes from './screens/SearchIndexes';
 import Synonyms from './screens/Synonyms';
 import ReadFile from './screens/ReadFile';
-
+import Quran from './screens/Quran';
+import Bible from './screens/Bible';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -48,6 +49,18 @@ function App() {
           },
         }} />
          <Stack.Screen name="ReadFile" component={ReadFile} options={{
+          headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+         <Stack.Screen name="Quran" component={Quran} options={{
+          headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+         <Stack.Screen name="Bible" component={Bible} options={{
           headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
