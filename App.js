@@ -12,6 +12,10 @@ import Synonyms from './screens/Synonyms';
 import ReadFile from './screens/ReadFile';
 import Quran from './screens/Quran';
 import Bible from './screens/Bible';
+import Quran_StopWords from './screens/Quran_StopWords';
+import Hadees_StopWords from './screens/Hadees_StopWords';
+import Bible_StopWords from './screens/Bible_StopWords';
+import Detail from './screens/Detail';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -61,6 +65,30 @@ function App() {
           },
         }} />
          <Stack.Screen name="Bible" component={Bible} options={{
+          headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+         <Stack.Screen name="Quran_StopWords" component={Quran_StopWords} options={{
+          headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+         <Stack.Screen name="Hadees_StopWords" component={Hadees_StopWords} options={{
+          headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+         <Stack.Screen name="Bible_StopWords" component={Bible_StopWords} options={{
+          headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+         <Stack.Screen name="Detail" component={Detail} options={{
           headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',

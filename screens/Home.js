@@ -87,8 +87,6 @@ const Home = ({ navigation }) => {
   }
 
   const ReadQuran = () => {
-
-
     db.transaction(function (txn) {
       txn.executeSql(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='Quran'",
@@ -126,7 +124,7 @@ const Home = ({ navigation }) => {
                     let newText = JSON.stringify(element);
                     let oldText = JSON.stringify(data[i]);
                     let str = '';
-                    str = oldText.concat(newText);
+                    str = oldText.concat(' ', newText);
                     let finalStr = str.replace(/\\r|"/g, '');
                     data.pop();
                     data.push(finalStr);
@@ -173,9 +171,6 @@ const Home = ({ navigation }) => {
         }
       );
     });
-
-
-
     console.log(';;;end;;;');
   }
 
@@ -187,7 +182,7 @@ const Home = ({ navigation }) => {
         [],
         function (tx, res) {
           console.log('item:', res.rows.length);
-          if (res.rows.length == 0) { 
+          if (res.rows.length == 0) {
             // TODO:if table is not created it will create new table otherwise it will do nothing.
             txn.executeSql('DROP TABLE IF EXISTS Hadees', []);
             txn.executeSql(
@@ -211,8 +206,9 @@ const Home = ({ navigation }) => {
               // console.log('staring index..',startingIndex);
               for (let index = startingIndex; index < newFile.length; index++) {
                 const element = newFile[index];
+                // console.log(element);
                 if (newFile[index].length > 1) {//TODO:Check if line has no  string
-                  if (element.match(/^\d/)) {
+                  if (element.match(/^\d.[\s]*\d/)) { // \d means digit and \s means space
                     // Return true if new line start with any numeric value
                     hadeesData.push(element);
                   } else {
@@ -227,28 +223,38 @@ const Home = ({ navigation }) => {
                   }
                 }
               }
+
               let hadeesWords = [];
               for (let i = 0; i < hadeesData.length; i++) {
                 let ele = hadeesData[i];
-                let [first,second,...third] = ele.split(':');
-                let [jild,hadees] = first.split('.');
+                let [first, second, ...third] = ele.split(':');
+                let [jild, hadees] = first.split('.');
                 let obj = {};
                 obj.JildNo = jild;
                 obj.HadeesNo = hadees;
                 obj.NarratedBy = second;
-                obj.HadeesText = third[0];
+                //obj.HadeesText = third[0];
+                third.forEach((element, index) => {
+                  if (index == 0) {
+                    obj.HadeesText = element;
+                  } else {
+                    obj.HadeesText += ':' + element;
+                  }
+                });
                 hadeesWords.push(obj);
               }
+
               hadeesWords.forEach((element, index) => {
                 // console.log(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;');
+                // console.log(element);
                 // console.log(element.JildNo, element.HadeesNo, element.NarratedBy,element.HadeesText);
                 // TODO:Store file data to database
-                 db.transaction(function (tx) {
+                db.transaction(function (tx) {
                   tx.executeSql(
                     'INSERT INTO Hadees (JildNo, HadeesNo, NarratedBy,HadeesText) VALUES (?,?,?,?)',
-                    [element.JildNo, element.HadeesNo, element.NarratedBy,element.HadeesText],
+                    [element.JildNo, element.HadeesNo, element.NarratedBy, element.HadeesText],
                     (tx, results) => {
-                      console.log('Inserted ID : ',results.insertId);
+                      console.log('Inserted ID : ', results.insertId);
                       if (results.rowsAffected > 0) {
                         console.log('Data Stored Successfully!');
                       } else alert('Something went worng...');
@@ -268,8 +274,8 @@ const Home = ({ navigation }) => {
         }
       );
     });
+    console.log(';;;end;;;');
   }
-
   const ReadBible = async () => {
 
     db.transaction(function (txn) {
@@ -337,7 +343,7 @@ const Home = ({ navigation }) => {
                     'INSERT INTO Bible1 (ChapterNo, VerseNo, VerseText) VALUES (?,?,?)',
                     [element.Chapter, element.Verse, element.Text],
                     (tx, results) => {
-                      console.log('Results', results.rowsAffected);
+                      console.log('Results', results.insertId);
                       if (results.rowsAffected > 0) {
                         console.log('Data Stored Successfully!');
                       } else alert('Something went worng...');
@@ -381,15 +387,27 @@ const Home = ({ navigation }) => {
       {/* <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}> Search Files </Text>
        </TouchableOpacity> */}
-      {/* <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('SearchIndexes')}>
-         <Text style={styles.buttonText}> Search  </Text>
-        </TouchableOpacity> */}
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SearchIndexes')}>
+        <Text style={styles.buttonText}> Search Indexes </Text>
+      </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Search')}>
         <Text style={styles.buttonText}> Search </Text>
       </TouchableOpacity>
       {/* <TouchableOpacity style={styles.button} onPress={()=>ReadFile()}>
           <Text style={styles.buttonText}> Read File </Text>
        </TouchableOpacity> */}
+
+
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Quran_StopWords')}>
+        <Text style={styles.buttonText}> Quran_StopWords </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Hadees_StopWords')}>
+        <Text style={styles.buttonText}> Hadees_StopWords </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Bible_StopWords')}>
+        <Text style={styles.buttonText}> Bible_StopWords </Text>
+      </TouchableOpacity>
+
     </ScrollView>
   );
 }

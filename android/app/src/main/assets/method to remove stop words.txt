@@ -1,0 +1,77 @@
+useEffect(async() => {
+        setData('');
+            console.log(listOfStopWords);
+            console.log(data);
+         
+        console.log('useEffect.....');
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM Quran',
+                [],
+                (tx, results) => {
+                    var temp = [];
+                    console.log(results.rows.length);
+                    var len = results.rows.length;
+                    if (len > 0) {
+                        for (let i = 0; i < 4; ++i)
+                            temp.push(results.rows.item(i));
+                    }
+                    let data = [];
+                    temp.forEach(element => {
+                        var e = JSON.stringify(element.AyatText);
+                        var originalStr = "" + JSON.parse(e);
+                        var removeSpaces = originalStr.replace(/^\s+|\s+$/gm, '');//remove whitespaces from start and end of string.
+                        var wordsArray = removeSpaces.split(' ');
+
+                        let newStringArray = sw.removeStopwords(wordsArray);
+                        // let newStringArray = [];
+                        // RNFS.readFileAssets('list of stop words.txt', 'ascii').then((res) => {
+                        //     var data = res.split(/\r?\n/);
+                        //     wordsArray.forEach((word,index) => {
+                        //       data.forEach(stopWord => {
+                        //           if(word.toLocaleLowerCase()==stopWord.toLocaleLowerCase()){
+                        //             //   console.log(index,wordsArray[index]);
+                        //               wordsArray.splice(index,1)//remove matching word
+                        //               index--;
+                        //           }
+                        //       });
+                        //     });
+                        //     console.log(wordsArray);
+                        // });
+                        // newStringArray.push(wordsArray);
+
+                        let finalArray = [];
+                        newStringArray.forEach(element => {
+                            finalArray.push(element);
+                        });
+                        var value0 = finalArray.join(' ').replace(/,|;|\./g, '');
+                        // console.log(value0.split(' ').join(','));
+                        var value = value0.split(' ').join(',');
+                        var obj = {};
+                        obj.Id = element.Id,
+                            obj.SurahId = element.SurahId,
+                            obj.AyatId = element.AyatId,
+                            obj.AyatText = element.AyatText,
+                            obj.After = value,
+                            data.push(obj);
+                    });
+                    // data.forEach((element,index) => {
+                    //     console.log(index,element.SurahId,element.AyatId,element.AyatText);
+
+                    // });
+                    data.forEach(element => {
+                        // console.log(element);
+                        setData(data => [...data,
+                        {
+                            Id: element.Id,
+                            SurahId: element.SurahId,
+                            AyatId: element.AyatId,
+                            AyatText: element.AyatText,
+                            After: element.After,
+                        }
+                        ]);
+                    });
+                    console.log('........................END...................');
+                });
+        });
+    }, []);
