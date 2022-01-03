@@ -15,8 +15,8 @@ const Bible = ({ navigation }) => {
                     var temp = [];
                     console.log(results.rows.length);
                     var len = results.rows.length;
-                    if (len > 0) {
-                        for (let i = 0; i < 200; ++i)
+                    if (len > 0 && len>150) {
+                        for (let i = 0; i < 100; ++i)
                             temp.push(results.rows.item(i));
                     }
                     temp.forEach(element => {

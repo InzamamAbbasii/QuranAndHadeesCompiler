@@ -152,7 +152,7 @@ const Home = ({ navigation }) => {
                     'INSERT INTO Quran (SurahId, AyatId, AyatText) VALUES (?,?,?)',
                     [element.SurahId, element.AyatId, JSON.parse(element.AyatText)],
                     (tx, results) => {
-                      console.log('Results', results.rowsAffected);
+                      console.log('Inserted Id ', results.insertId);
                       if (results.rowsAffected > 0) {
                         console.log('Data Stored Successfully!');
                       } else alert('Something went worng...');
@@ -383,6 +383,9 @@ const Home = ({ navigation }) => {
        </TouchableOpacity> */}
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Synonyms')}>
         <Text style={styles.buttonText}>  Synonyms </Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddSynonyms')}>
+        <Text style={styles.buttonText}>  AddSynonyms </Text>
       </TouchableOpacity>
       {/* <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}> Search Files </Text>

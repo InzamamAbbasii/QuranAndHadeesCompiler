@@ -90,7 +90,7 @@ const Quran_StopWords = ({ navigation }) => {
                         });//temp end
                         let uniqueValuesArray = [];
                         finalArray.forEach((element,i) => {
-                            console.log(element.After);
+                            // console.log(element.After);
                             let arr = String(element.After).replace(/,$/,'').split(',');
                             let  uniqueValues=[...new Set(arr)].join(',');
                             let obj ={};
@@ -103,7 +103,7 @@ const Quran_StopWords = ({ navigation }) => {
                             });
                             // console.log('uniqueValues',uniqueValues);
                             uniqueValuesArray.forEach(stopWord => {
-                                console.log(stopWord);
+                                // console.log(stopWord);
                                 // let str= String(stopWord).replace(/\s/,',');
                                 // console.log(str);
                                 setData(data => [...data,
@@ -125,8 +125,6 @@ const Quran_StopWords = ({ navigation }) => {
 
     const test = () => {
         setData('');
-        console.log(listOfStopWords);
-        console.log(data);
 
         console.log('useEffect.....');
         db.transaction((tx) => {
@@ -135,7 +133,7 @@ const Quran_StopWords = ({ navigation }) => {
                 [],
                 (tx, results) => {
                     var temp = [];
-                    console.log(results.rows.length);
+                    // console.log(results.rows.length);
                     var len = results.rows.length;
                     if (len > 0) {
                         for (let i = 0; i < 4; ++i)
@@ -189,9 +187,9 @@ const Quran_StopWords = ({ navigation }) => {
         RNFS.readFileAssets('1.txt').then((res) => {
             // console.log('read file res: ', res);
             const oldString = res.split(' ');
-            console.log(oldString);
+            // console.log(oldString);
             const newStringArray = sw.removeStopwords(oldString);
-            console.log(newStringArray);
+            // console.log(newStringArray);
             // let result, suffix;
             // // var sing = pluralize.singular('country’');
             // // var sing = singular('feet');

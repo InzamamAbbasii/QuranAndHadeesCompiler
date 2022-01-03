@@ -16,6 +16,7 @@ import Quran_StopWords from './screens/Quran_StopWords';
 import Hadees_StopWords from './screens/Hadees_StopWords';
 import Bible_StopWords from './screens/Bible_StopWords';
 import Detail from './screens/Detail';
+import AddSynonyms from './screens/AddSynonyms';
 const Stack = createNativeStackNavigator();
 
 function App() {
@@ -89,6 +90,12 @@ function App() {
           },
         }} />
          <Stack.Screen name="Detail" component={Detail} options={{
+          headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+         <Stack.Screen name="AddSynonyms" component={AddSynonyms} options={{
           headerStyle: { backgroundColor: '#3a53a6' }, headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
