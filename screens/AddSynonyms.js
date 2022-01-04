@@ -495,11 +495,11 @@ const AddSynonyms = ({ navigation }) => {
     useEffect(async () => {
         setData('');
         console.log('useEffect.....');
-        // await storeQuranKeyWords();
-        // await storeHadeesKeyWords();
-        // await storeBibleKeyWords();
-        // await getKeywordsAndStoreSynonyms();
-        // await getKeyWords();
+        await storeQuranKeyWords();
+        await storeHadeesKeyWords();
+        await storeBibleKeyWords();
+        await getKeywordsAndStoreSynonyms();
+        await getKeyWords();
         await getSynonyms();
     }, []);
 

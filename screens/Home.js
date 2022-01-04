@@ -369,39 +369,39 @@ const Home = ({ navigation }) => {
     <ScrollView style={styles.container}>
       <Text style={{ fontWeight: 'bold', color: '#3a53a6', fontSize: 40 }}>Quran And Hadees  </Text>
       <Text style={{ fontWeight: 'bold', color: '#3a53a6', fontSize: 40, alignSelf: 'center' }}>Compiler </Text>
-      <TouchableOpacity style={styles.button} onPress={() => ReadQuran()}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Quran')}>
         <Text style={styles.buttonText}> Quran </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => ReadHadees()}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Hadees')}>
         <Text style={styles.buttonText}> Hadith </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => ReadBible()}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Bible')}>
         <Text style={styles.buttonText}> Bible </Text>
       </TouchableOpacity>
       {/* <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}> Thesaurus </Text>
        </TouchableOpacity> */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Synonyms')}>
+      {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Synonyms')}>
         <Text style={styles.buttonText}>  Synonyms </Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddSynonyms')}>
+      </TouchableOpacity> */}
+      {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddSynonyms')}>
         <Text style={styles.buttonText}>  AddSynonyms </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}> Search Files </Text>
        </TouchableOpacity> */}
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SearchIndexes')}>
         <Text style={styles.buttonText}> Search Indexes </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Search')}>
+      {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Search')}>
         <Text style={styles.buttonText}> Search </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* <TouchableOpacity style={styles.button} onPress={()=>ReadFile()}>
           <Text style={styles.buttonText}> Read File </Text>
        </TouchableOpacity> */}
 
 
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Quran_StopWords')}>
+      {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Quran_StopWords')}>
         <Text style={styles.buttonText}> Quran_StopWords </Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Hadees_StopWords')}>
@@ -409,7 +409,7 @@ const Home = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Bible_StopWords')}>
         <Text style={styles.buttonText}> Bible_StopWords </Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
     </ScrollView>
   );
