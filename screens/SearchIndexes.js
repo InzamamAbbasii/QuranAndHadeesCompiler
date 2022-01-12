@@ -3,6 +3,9 @@ import { StyleSheet, Text, View, TextInput, ScrollView, FlatList, TouchableOpaci
 import { openDatabase } from 'react-native-sqlite-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Highlighter from 'react-native-highlight-words';
+import IModal from "../src/components/IModal";
+import CongratsAlert from "../src/components/CongratsAlert";
+import KeepAwake from "react-native-keep-awake";
 var RNFS = require('react-native-fs');
 const sw = require('remove-stopwords');
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
@@ -16,6 +19,11 @@ const SearchIndexes = ({ navigation }) => {
     const [isFetched, setIsFetched] = useState(false);
     const [isStore, setIsStore] = useState(true);
     const [gettingDataFor, setGettingDataFor] = useState('Quran');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [showCongratsAlert, setShowCongratsAlert] = useState(false);
+    const [percentage, setPercentage] = useState(0);
+    const [totalData, setTotalData] = useState(0);
+    const [savedData, setSavedData] = useState(0);
     let lst = [];
     var radio_props = [
         { label: 'Quran ', value: 'Quran' },
@@ -24,6 +32,7 @@ const SearchIndexes = ({ navigation }) => {
     ];
 
     const storeQuranKeyWords = async () => {
+        setIsStore(false);
         await db.transaction(function (txn) {
             txn.executeSql(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='StopWords'",
@@ -92,6 +101,7 @@ const SearchIndexes = ({ navigation }) => {
                                                 obj.After = uniqueValues,
                                                 uniqueValuesArray.push(obj);
                                         });
+                                        setModalVisible(true);
                                         uniqueValuesArray.forEach(stopWord => {
                                             db.transaction(function (tx) {
                                                 tx.executeSql(
@@ -99,6 +109,9 @@ const SearchIndexes = ({ navigation }) => {
                                                     [stopWord.Id, stopWord.After, 'Quran'],
                                                     (tx, results) => {
                                                         console.log('Inserted Id ', results.insertId);
+                                                        let per = (((results.insertId / uniqueValuesArray.length) * 100)/3).toFixed(0);
+                                                        setPercentage(per);
+                                                        setTotalData(uniqueValuesArray.length); setSavedData(results.insertId);
                                                         if (results.rowsAffected > 0) {
                                                             console.log('Data Stored Successfully!');
                                                         } else alert('Something went worng...');
@@ -185,6 +198,7 @@ const SearchIndexes = ({ navigation }) => {
                                 uniqueValuesArray.push(obj);
                         });
                         // console.log('uniqueValues',uniqueValues);
+                        let count=1;
                         uniqueValuesArray.forEach(stopWord => {
                             db.transaction(function (tx) {
                                 tx.executeSql(
@@ -193,7 +207,9 @@ const SearchIndexes = ({ navigation }) => {
                                     (tx, results) => {
                                         console.log('Inserted Id ', results.insertId);
                                         if (results.rowsAffected > 0) {
-                                            console.log('Data Stored Successfully!');
+                                            let per = (((results.insertId / uniqueValuesArray.length) * 100)/3).toFixed(0);
+                                            setPercentage(per);
+                                            setTotalData(uniqueValuesArray.length); setSavedData(count++);
                                         } else alert('Something went worng...');
                                     }
                                 );
@@ -206,6 +222,8 @@ const SearchIndexes = ({ navigation }) => {
         storeBibleKeyWords();
     }
     const storeBibleKeyWords = async () => {
+        setIsStore(false);setModalVisible(true);
+        console.log('storing bible');
         await db.transaction((tx) => {
             tx.executeSql(
                 'SELECT * FROM Bible1',
@@ -261,19 +279,20 @@ const SearchIndexes = ({ navigation }) => {
                                 obj.After = uniqueValues,
                                 uniqueValuesArray.push(obj);
                         });
+                        let count=1;
                         uniqueValuesArray.forEach(stopWord => {
-                            db.transaction(function (tx) {
                                 tx.executeSql(
                                     'INSERT INTO StopWords (TextId,Keywords,BookName ) VALUES (?,?,?)',
                                     [stopWord.Id, stopWord.After, 'Bible'],
                                     (tx, results) => {
                                         console.log('Inserted Id ', results.insertId);
                                         if (results.rowsAffected > 0) {
-                                            console.log('Data Stored Successfully!');
+                                            let per = (((results.insertId / uniqueValuesArray.length) * 100)/3).toFixed(0);
+                                            setPercentage(per);
+                                            setTotalData(uniqueValuesArray.length); setSavedData(count++);
                                         } else alert('Something went worng...');
                                     }
                                 );
-                            });
                         });
                     });//read file end
                     console.log('........................END...................');
@@ -414,6 +433,7 @@ const SearchIndexes = ({ navigation }) => {
     useEffect(async () => {
         // setIsStore(true);
         await storeQuranKeyWords();
+        // await storeBibleKeyWords();
         // getSynonyms();
     }, [])
 
@@ -431,7 +451,7 @@ const SearchIndexes = ({ navigation }) => {
                         for (let i = 0; i < results.rows.length; ++i)
                             temp.push(results.rows.item(i).Synonym);
                         temp.forEach(element => {
-                            console.log('element', element);
+                            // console.log('element', element);
                             setSearchArray(data => [...data, { Syn: element }]);
                             lst.push(element);
                             let searchWord = element;
@@ -442,7 +462,7 @@ const SearchIndexes = ({ navigation }) => {
                                 [],
                                 (tx, results) => {
                                     rowsLength = results.rows.length;
-                                    console.log(element, rowsLength);
+                                    // console.log(element, rowsLength);
                                     for (let i = 0; i < results.rows.length; ++i)
                                         arr.push(results.rows.item(i));
                                     if (rowsLength > 0) {
@@ -517,7 +537,6 @@ const SearchIndexes = ({ navigation }) => {
                         });
 
                     }//else
-
                 });
 
         });
@@ -849,6 +868,20 @@ const SearchIndexes = ({ navigation }) => {
         }
 
     }
+    const handleOk = () => {
+        setPercentage(0);
+        setSavedData(0);
+        setTotalData(0);
+        setShowCongratsAlert(false);//to hide CongratsAlert
+    }
+    const handleCancel = () => {
+        setPercentage(0);
+        setSavedData(0);
+        setTotalData(0);
+        setModalVisible(false);//to hide Downloader alert-(IModel)
+        setShowCongratsAlert(true);//to show CongratsAlert
+        KeepAwake.deactivate();
+    }
     return (
         <View style={styles.container}>
             {
@@ -858,6 +891,20 @@ const SearchIndexes = ({ navigation }) => {
                     </View>
                 ) : (
                     <View>
+                        <IModal
+                            percentage={percentage}
+                            savedRecord={savedData}
+                            totalRecords={totalData}
+                            modalVisible={modalVisible}
+                            onCancel={handleCancel}
+                        />
+
+                        <CongratsAlert
+                            modalVisible={showCongratsAlert}
+                            onOk={handleOk}
+                        />
+
+                        <KeepAwake />
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <TextInput style={styles.input}
                                 onChangeText={(text) => setSearch(text)}

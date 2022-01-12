@@ -18,6 +18,7 @@ const Detail = ({ navigation, route }) => {
                         <View style={{ padding: 10 }}>
                             <Text style={[styles.text, { color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10 }]} >Surah {route.params.SurahNo} : Ayat {route.params.AyatNo}</Text>
                             {/* <Highlighter style={styles.text}
+                                autoEscape={false}
                                 highlightStyle={{ backgroundColor: '#ffa200' }}
                                 searchWords={array}
                                 textToHighlight={route.params.Text}

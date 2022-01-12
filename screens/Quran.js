@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator,LogBox } from 'react-native';
 var RNFS = require('react-native-fs');
 const sw = require('remove-stopwords');
+import CircularProgress from 'react-native-circular-progress-indicator';
 import { openDatabase } from 'react-native-sqlite-storage';
+import * as Progress from 'react-native-progress';
+import { log } from "react-native-reanimated";
 const Quran = ({ navigation, route }) => {
+    LogBox.ignoreLogs(['new NativeEventEmitter']);
     const [data, setData] = useState([]);
     const [isFetched, setIsFetched] = useState(true);
+    const [percentage, setPercentage] = useState(0);
+    const [totalData, setTotalData] = useState(0);
+    const [savedData, setSavedData] = useState(0);
     var db = openDatabase({ name: 'ReadFile.db', createFromLocation: 1 });
     const ReadQuran = async () => {
         console.log('read Quran');
-       await db.transaction(function (txn) {
+        await db.transaction(function (txn) {
             txn.executeSql(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='Quran'",
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='Quran1'",
                 [],
                 function (tx, res) {
                     console.log('item:', res.rows.length);
@@ -66,17 +73,21 @@ const Quran = ({ navigation, route }) => {
                                 obj.AyatText = JSON.stringify(second);
                                 words.push(obj);
                             }
+
                             words.forEach((element, index) => {
                                 // console.log(element.SurahId, element.AyatId, JSON.parse(element.AyatText));
                                 // TODO:Store file data to database
+
                                 db.transaction(function (tx) {
                                     tx.executeSql(
                                         'INSERT INTO Quran (SurahId, AyatId, AyatText) VALUES (?,?,?)',
                                         [element.SurahId, element.AyatId, JSON.parse(element.AyatText)],
                                         (tx, results) => {
-                                            console.log('Inserted Id ', results.insertId);
                                             if (results.rowsAffected > 0) {
-                                                console.log('Data Stored Successfully!');
+                                                let per = ((results.insertId / words.length) * 100).toFixed(0);
+                                                setPercentage(per);
+                                                setTotalData(words.length);setSavedData(results.insertId);
+                                                console.log(`${per}% Data Stored Successfully! , Inserted ID : ${results.insertId}`);
                                             } else alert('Something went worng...');
                                         }
                                     );
@@ -104,8 +115,8 @@ const Quran = ({ navigation, route }) => {
         setData('');
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM Quran',
-                [],
+                'SELECT * from Quran WHERE SurahId=?',
+                [route.params.SurahId],
                 (tx, results) => {
                     var temp = [];
                     console.log(results.rows.length);
@@ -114,7 +125,6 @@ const Quran = ({ navigation, route }) => {
                         for (let i = 0; i < len; ++i)
                             temp.push(results.rows.item(i));
                     }
-
                     temp.forEach(element => {
                         setData(data => [...data,
                         {
@@ -124,6 +134,7 @@ const Quran = ({ navigation, route }) => {
                             AyatText: element.AyatText,
                         }
                         ]);
+                        // console.log(data.length);
                     });
                     setIsFetched(false);
                 });
@@ -132,17 +143,34 @@ const Quran = ({ navigation, route }) => {
 
     useEffect(async () => {
         setIsFetched(true);
-       await ReadQuran();
+        //  ReadQuran();
+        getQuranData();
     }, []);
-
 
     return (
 
         <View style={styles.container}>
             {isFetched == true ? (
-                <View style={[styles.container, styles.horizontal]}>
-                    <ActivityIndicator size="large" color="#000" />
-                </View>
+                percentage == 0 ? (
+                    <View style={[styles.container, styles.horizontal]}>
+                        <ActivityIndicator size="large" color="red" />
+                        {/* <Progress.Bar progress={0.3} width={200} height={10} /> */}
+                    </View>
+                ) : (
+                    <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                        <Text style={{fontSize:20,fontWeight:'bold'}}>{savedData}/{totalData}</Text>
+                        <CircularProgress
+                            value={percentage}
+                            radius={120}
+                            duration={2000}
+                            textColor={'red'}
+                            maxValue={100}
+                            title={'%'}
+                            titleColor={'red'}
+                            titleStyle={{ fontWeight: 'bold' }}
+                        />
+                    </View>
+                )
             ) : (
                 <FlatList showsVerticalScrollIndicator={false}
                     data={data}
@@ -152,9 +180,9 @@ const Quran = ({ navigation, route }) => {
                     windowSize={10}
                     renderItem={(item, index) =>
                         <View
-                            style={{ flex: 1, width: '97%', alignSelf: 'center', borderRadius: 8, elevation: 5, marginBottom: 20, padding: 10, backgroundColor: '#fff' }}>
-                            <Text style={{ color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10,fontSize:20 }} >Surah No {item.item.SurahId} : Ayat No {item.item.AyatId}</Text>
-                            <Text style={{ fontSize: 20, }}>{item.item.AyatText}</Text>
+                            style={{ flex: 1, width: '97%', alignSelf: 'center', borderRadius: 8, elevation: 5, marginBottom: 10, padding: 10, backgroundColor: '#58c7be' }}>
+                            <Text style={{ color: 'black', fontWeight: 'bold', backgroundColor: '#58c7be', paddingVertical: 10, fontSize: 20 }} >Surah No {item.item.SurahId} : Ayat No {item.item.AyatId}</Text>
+                            <Text style={{ fontSize: 20,color:'#222' }}>{item.item.AyatText}</Text>
                         </View>
                     }
                 />
@@ -177,7 +205,7 @@ const styles = StyleSheet.create({
         padding: 10
     },
     button: {
-        backgroundColor: '#3a53a6',
+        backgroundColor: '#58c7be',
         marginBottom: 13,
         height: 50,
         width: '97%',

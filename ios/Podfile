@@ -18,6 +18,8 @@ target 'QuranAndHadeesCompiler' do
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
 
+  pod 'react-native-keep-awake', :path => '../node_modules/react-native-keep-awake'
+
   target 'QuranAndHadeesCompilerTests' do
     inherit! :complete
     # Pods for testing

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
+import CircularProgress from 'react-native-circular-progress-indicator';
 var RNFS = require('react-native-fs');
-const Bible = ({ navigation }) => {
+const Bible = ({ navigation,route }) => {
     const [data, setData] = useState([]);
     const [isFetched, setIsFetched] = useState(true);
+    const [percentage, setPercentage] = useState(0);
     var db = openDatabase({ name: 'ReadFile.db', createFromLocation: 1 });
     const storeBibleData = async () => {
         console.log('read Bible...');
@@ -76,9 +78,10 @@ const Bible = ({ navigation }) => {
                               'INSERT INTO Bible1 (ChapterNo, VerseNo, VerseText) VALUES (?,?,?)',
                               [element.Chapter, element.Verse, element.Text],
                               (tx, results) => {
-                                console.log('Results', results.insertId);
                                 if (results.rowsAffected > 0) {
-                                  console.log('Data Stored Successfully!');
+                                  let per = ((results.insertId / bibleWords.length) * 100).toFixed(0);
+                                  setPercentage(per);
+                                  console.log(`${per}% Data Stored Successfully! , Inserted ID : ${results.insertId}`);
                                 } else alert('Something went worng...');
                               }
                             );
@@ -105,8 +108,8 @@ const Bible = ({ navigation }) => {
         console.log('get bible data........');
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM Bible1',
-                [],
+                'SELECT *FROM Bible1 WHERE ChapterNo=? And BookId=?',
+                [route.params.ChapterNo,route.params.BookId],
                 (tx, results) => {
                     var temp = [];
                     console.log(results.rows.length);
@@ -131,16 +134,34 @@ const Bible = ({ navigation }) => {
     }
     useEffect(async() => {
         console.log('.........................................');
-       await storeBibleData();
+      //  await storeBibleData();
+      getBibleData();
     }, []);
     return (
         <View style={styles.container}>
             {isFetched == true ? (
-                <View style={[styles.container, styles.horizontal]}>
-                    <ActivityIndicator size="large" color="#000" />
-                </View>
+                 percentage == 0 ? (
+                  <View style={[styles.container, styles.horizontal]}>
+                      <ActivityIndicator size="large" color="red" />
+                      {/* <Progress.Bar progress={0.3} width={200} height={10} /> */}
+                  </View>
+              ) : (
+                  <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+
+                      <CircularProgress
+                          value={percentage}
+                          radius={120}
+                          duration={2000}
+                          textColor={'red'}
+                          maxValue={100}
+                          title={'%'}
+                          titleColor={'red'}
+                          titleStyle={{ fontWeight: 'bold' }}
+                      />
+                  </View>
+              )
             ) : (
-                <FlatList showsVerticalScrollIndicator={false}
+                <FlatList showsVerticalScrollIndicator={false} style={{padding:10}}
                     data={data}
                     keyExtractor={(item, index) => index}
                     initialNumToRender={10}
@@ -148,10 +169,10 @@ const Bible = ({ navigation }) => {
                     windowSize={10}
                     renderItem={(item, index) =>
                         <View
-                            style={{ flex: 1, width: '97%', alignSelf: 'center', borderRadius: 8, elevation: 5, marginBottom: 20, padding: 10, backgroundColor: '#fff' }}>
-                            <Text style={{ color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10,fontSize:20 }} >Chapter No {item.item.ChapterNo} : Verse No {item.item.VerseNo}</Text>
+                            style={{ flex: 1, width: '97%', alignSelf: 'center', borderRadius: 8, elevation: 5, marginBottom: 10, padding: 10, backgroundColor: '#58c7be' }}>
+                            <Text style={{ color: '#000', fontWeight: 'bold', paddingVertical: 10,fontSize:20 }} >Chapter No {item.item.ChapterNo} : Verse No {item.item.VerseNo}</Text>
 
-                            <Text style={{ color: '#3a53a6', fontSize: 20 }}>{item.item.VerseText}</Text>
+                            <Text style={{ color: '#222', fontSize: 20 }}>{item.item.VerseText}</Text>
                         </View>
                     }
                 />
@@ -165,8 +186,7 @@ export default Bible;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        padding: 10,
+        backgroundColor: '#eee',
     },
     horizontal: {
         flexDirection: "row",

@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, ScrollView, ActivityIndicator } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
+import CircularProgress from 'react-native-circular-progress-indicator';
 var RNFS = require('react-native-fs');
 export default function Hadees({ navigation, route }) {
     const [data, setData] = useState([]);
-    const [isFetched, setisFetched] = useState(true)
+    const [isFetched, setisFetched] = useState(true);
+    const [percentage, setPercentage] = useState(0);
+    const [totalData, setTotalData] = useState(0);
+    const [savedData, setSavedData] = useState(0);
+
     var db = openDatabase({ name: 'ReadFile.db', createFromLocation: 1 });
     const ReadHadees = async () => {
         console.log('read Hadees...');
@@ -86,9 +91,10 @@ export default function Hadees({ navigation, route }) {
                                         'INSERT INTO Hadees (JildNo, HadeesNo, NarratedBy,HadeesText) VALUES (?,?,?,?)',
                                         [element.JildNo, element.HadeesNo, element.NarratedBy, element.HadeesText],
                                         (tx, results) => {
-                                            console.log('Inserted ID : ', results.insertId);
                                             if (results.rowsAffected > 0) {
-                                                console.log('Data Stored Successfully!');
+                                                let per = ((results.insertId / hadeesWords.length) * 100).toFixed(0);
+                                                setPercentage(per);
+                                                console.log(`${per}% Data Stored Successfully! , Inserted ID : ${results.insertId}`);
                                             } else alert('Something went worng...');
                                         }
                                     );
@@ -114,8 +120,8 @@ export default function Hadees({ navigation, route }) {
         setData('');
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM Hadees',
-                [],
+                'select * from Hadees WHERE JildNo=? AND HadeesText is not NULL',
+                [route.params.JildNo],
                 (tx, results) => {
                     var temp = [];
                     console.log('line 120 ', results.rows.length);
@@ -140,7 +146,8 @@ export default function Hadees({ navigation, route }) {
         })
     }
     useEffect(async () => {
-        await ReadHadees();
+        // await ReadHadees();
+        getHadeesData();
     }, []);
     return (
         <View style={{
@@ -149,9 +156,26 @@ export default function Hadees({ navigation, route }) {
 
             {
                 isFetched == true ? (
-                    <View style={[styles.container, styles.horizontal]}>
-                        <ActivityIndicator size="large" color="#000" />
-                    </View>
+                    percentage == 0 ? (
+                        <View style={[styles.container, styles.horizontal]}>
+                            <ActivityIndicator size="large" color="red" />
+                            {/* <Progress.Bar progress={0.3} width={200} height={10} /> */}
+                        </View>
+                    ) : (
+                        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+    
+                            <CircularProgress
+                                value={percentage}
+                                radius={120}
+                                duration={2000}
+                                textColor={'red'}
+                                maxValue={100}
+                                title={'%'}
+                                titleColor={'red'}
+                                titleStyle={{ fontWeight: 'bold' }}
+                            />
+                        </View>
+                    )
                 ) : (
                     <FlatList showsVerticalScrollIndicator={false}
                         data={data}
@@ -161,10 +185,10 @@ export default function Hadees({ navigation, route }) {
                         windowSize={10}
                         renderItem={(item, index) =>
                             <View
-                                style={{ flex: 1, width: '97%', alignSelf: 'center', borderRadius: 8, elevation: 5, marginBottom: 20, padding: 10, backgroundColor: '#fff' }}>
-                            <Text style={{ color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10,fontSize:20 }} >Jild No {item.item.JildNo} : Hadees No {item.item.HadeesNo}</Text>
-                                <Text style={{ fontSize: 20, }}>{item.item.NarratedBy}</Text>
-                                <Text style={{ fontSize: 20, }}>{item.item.HadeesText}</Text>
+                                style={{ flex: 1, width: '97%', alignSelf: 'center', borderRadius: 8, elevation: 5, marginBottom: 10, padding: 10, backgroundColor: '#58c7be' }}>
+                                <Text style={{ color: '#000', fontWeight: 'bold', paddingVertical: 10, fontSize: 20 }} >Jild No {item.item.JildNo} : Hadees No {item.item.HadeesNo}</Text>
+                                <Text style={{ fontSize: 20,color:'#222' }}>{item.item.NarratedBy}</Text>
+                                <Text style={{ fontSize: 20,color:'#222' }}>{item.item.HadeesText}</Text>
                             </View>
                         }
                     />
