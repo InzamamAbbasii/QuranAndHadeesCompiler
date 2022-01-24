@@ -313,36 +313,74 @@ const Home = ({ navigation }) => {
                 console.log('.............................');
                 let count = 0;
                 let bookId = 1;
-                bibleWords.forEach((element, index) => {
-                  // console.log(element.Chapter, element.Verse, element.Text);
+                for (let index = 0; index < bibleWords.length; index++) {
+                  const element = bibleWords[index];
                   // TODO:Store file data to database
-                    if (element.Chapter === '1' && element.Verse === '1') {
-                      // console.log(index, ++count);
-                      tx.executeSql(
+                 
+                  if (element.Chapter === '1' && element.Verse === '1') {
+                    // console.log(index, ++count);
+                    // console.log('if');
+                    db.transaction((txx) => {
+                      txx.executeSql(
                         'SELECT * from BibleBooks',
                         [],
                         (tx, results) => {
                           var len = results.rows.length;
                           if (len > 0) {
                             bookId = results.rows.item(count).Id;
-                            console.log(results.rows.item(count).Id);
                             count++;
                           } else { alert('Book not found.') }
                         });
-                    }
-                    tx.executeSql(
-                      'INSERT INTO Bible1 (ChapterNo, VerseNo, VerseText,BookId) VALUES (?,?,?,?)',
-                      [element.Chapter, element.Verse, element.Text, bookId],
-                      (tx, results) => {
-                        if (results.rowsAffected > 0) {
-                          let per = ((results.insertId / bibleWords.length) * 100).toFixed(0);
-                          setPercentage(per);
-                          setTotalData(bibleWords.length); setSavedData(results.insertId);
-                        } else alert('Something went worng...');
-                      }
-                    );
-                  // ............END OF STORING DATA TO DATABASE.............
-                });
+                    });
+                  }
+                  // else {
+                    db.transaction((txx) => {
+                      txx.executeSql(
+                        'INSERT INTO Bible1 (ChapterNo, VerseNo, VerseText,BookId) VALUES (?,?,?,?)',
+                        [element.Chapter, element.Verse, element.Text, count.toString()],
+                        (tx, results) => {
+                          if (results.rowsAffected > 0) {
+                            console.log(results.insertId,count,bookId);
+                            let per = ((results.insertId / bibleWords.length) * 100).toFixed(0);
+                            setPercentage(per);
+                            setTotalData(bibleWords.length); setSavedData(results.insertId);
+                          } else alert('Something went worng...');
+                        }
+                      );
+                    });
+                  // }
+
+                }
+                // bibleWords.forEach((element, index) => {
+                //   // console.log(element.Chapter, element.Verse, element.Text);
+                //   // TODO:Store file data to database
+                //   if (element.Chapter === '1' && element.Verse === '1') {
+                //     // console.log(index, ++count);
+                //     tx.executeSql(
+                //       'SELECT * from BibleBooks',
+                //       [],
+                //       (tx, results) => {
+                //         var len = results.rows.length;
+                //         if (len > 0) {
+                //           bookId = results.rows.item(count).Id;
+                //           console.log(results.rows.item(count).Id);
+                //           count++;
+                //         } else { alert('Book not found.') }
+                //       });
+                //   }
+                //   tx.executeSql(
+                //     'INSERT INTO Bible1 (ChapterNo, VerseNo, VerseText,BookId) VALUES (?,?,?,?)',
+                //     [element.Chapter, element.Verse, element.Text, count],
+                //     (tx, results) => {
+                //       if (results.rowsAffected > 0) {
+                //         let per = ((results.insertId / bibleWords.length) * 100).toFixed(0);
+                //         setPercentage(per);
+                //         setTotalData(bibleWords.length); setSavedData(results.insertId);
+                //       } else alert('Something went worng...');
+                //     }
+                //   );
+                //   // ............END OF STORING DATA TO DATABASE.............
+                // });
                 // getBibleData();
               });
               console.log('....End Storing Bible....');
@@ -392,7 +430,7 @@ const Home = ({ navigation }) => {
       />
 
       <KeepAwake />
-      <View style={{ flexDirection: 'row', margin: 10, backgroundColor: '#fff' }}>
+      <View style={{ flexDirection: 'row', margin: 10}}>
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadQuran()}>
           <Image
@@ -407,29 +445,40 @@ const Home = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row', margin: 10, backgroundColor: '#fff' }}>
+      <View style={{ flexDirection: 'row', margin: 10}}>
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadBible()}>
           <Image
-            source={require('../assets/images/holy-bible.png')}
+            source={require('../assets/images/bible-cover-B7MRKJ.jpg')}
             style={styles.imageStyle}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('SearchIndexes')}>
-          <Image
-            source={require('../assets/images/Search.jpg')}
-            style={styles.imageStyle}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={{ flexDirection: 'row', margin: 10, backgroundColor: '#fff', justifyContent: 'center' }}>
-
-        <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('IndexesTabs')}>
+        {/* <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('IndexesTabs')}>
           <Image
             source={require('../assets/images/index.png')}
             style={styles.imageStyle}
           />
+        </TouchableOpacity> */}
+
+        
+      </View>
+      <View style={{ flexDirection: 'row', margin: 10, justifyContent: 'center' }}>
+
+        <TouchableOpacity style={{ flex: 1, margin: 5 }}
+          style={{
+            backgroundColor: 'green', width: Dimensions.get('window').width / 2 - 30, height: Dimensions.get('window').width / 2 - 30,
+            borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center'
+          }}
+          onPress={() => navigation.navigate('Search')}>
+          <Text style={{ color: '#fff', fontSize: 44, fontWeight: 'bold' }}>Search</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={{  backgroundColor: 'green', width: Dimensions.get('window').width / 2 - 30, height: Dimensions.get('window').width / 2 - 30,
+            borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center',marginLeft:15}}
+             onPress={() => navigation.navigate('SearchIndexes')}>
+          <Text style={{ color: '#fff', fontSize: 40, fontWeight: 'bold' }}>Indexes</Text>
+          
+        </TouchableOpacity>
+        
       </View>
 
     </ScrollView>
@@ -440,7 +489,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#e6b65e',
     padding: 10,
   },
   button: {

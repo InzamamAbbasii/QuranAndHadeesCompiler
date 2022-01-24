@@ -24,6 +24,7 @@ const SearchIndexes = ({ navigation }) => {
     const [percentage, setPercentage] = useState(0);
     const [totalData, setTotalData] = useState(0);
     const [savedData, setSavedData] = useState(0);
+    const [testData, setTestData] = useState([]);
     let lst = [];
     var radio_props = [
         { label: 'Quran ', value: 'Quran' },
@@ -35,14 +36,14 @@ const SearchIndexes = ({ navigation }) => {
         setIsStore(false);
         await db.transaction(function (txn) {
             txn.executeSql(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='StopWords'",
+                "SELECT name FROM sqlite_master WHERE type='table' AND name='AllKeyWords'",
                 [],
                 function (tx, res) {
                     if (res.rows.length == 0) {
                         // TODO:if table is not created it will create new table otherwise it will do nothing.
-                        txn.executeSql('DROP TABLE IF EXISTS StopWords', []);
+                        txn.executeSql('DROP TABLE IF EXISTS AllKeyWords', []);
                         txn.executeSql(
-                            'CREATE TABLE IF NOT EXISTS StopWords(Id INTEGER PRIMARY KEY AUTOINCREMENT,TextId int,Keywords TEXT,BookName TEXT)',
+                            'CREATE TABLE IF NOT EXISTS AllKeyWords(Id INTEGER PRIMARY KEY AUTOINCREMENT,ReferenceId int,Keywords TEXT,BookName TEXT)',
                             []
                         );
                         db.transaction((tx) => {
@@ -105,11 +106,11 @@ const SearchIndexes = ({ navigation }) => {
                                         uniqueValuesArray.forEach(stopWord => {
                                             db.transaction(function (tx) {
                                                 tx.executeSql(
-                                                    'INSERT INTO StopWords (TextId, Keywords,BookName) VALUES (?,?,?)',
+                                                    'INSERT INTO AllKeyWords (ReferenceId, Keywords,BookName) VALUES (?,?,?)',
                                                     [stopWord.Id, stopWord.After, 'Quran'],
                                                     (tx, results) => {
                                                         console.log('Inserted Id ', results.insertId);
-                                                        let per = (((results.insertId / uniqueValuesArray.length) * 100)/3).toFixed(0);
+                                                        let per = (((results.insertId / uniqueValuesArray.length) * 100) / 3).toFixed(0);
                                                         setPercentage(per);
                                                         setTotalData(uniqueValuesArray.length); setSavedData(results.insertId);
                                                         if (results.rowsAffected > 0) {
@@ -136,7 +137,6 @@ const SearchIndexes = ({ navigation }) => {
         });
     }
     const storeHadeesKeyWords = async () => {
-
         await db.transaction((tx) => {
             tx.executeSql(
                 'SELECT * FROM Hadees',
@@ -198,16 +198,16 @@ const SearchIndexes = ({ navigation }) => {
                                 uniqueValuesArray.push(obj);
                         });
                         // console.log('uniqueValues',uniqueValues);
-                        let count=1;
+                        let count = 1;
                         uniqueValuesArray.forEach(stopWord => {
                             db.transaction(function (tx) {
                                 tx.executeSql(
-                                    'INSERT INTO StopWords (TextId ,Keywords,BookName) VALUES (?,?,?)',
+                                    'INSERT INTO AllKeyWords (ReferenceId ,Keywords,BookName) VALUES (?,?,?)',
                                     [stopWord.Id, stopWord.After, 'Hadees'],
                                     (tx, results) => {
                                         console.log('Inserted Id ', results.insertId);
                                         if (results.rowsAffected > 0) {
-                                            let per = (((results.insertId / uniqueValuesArray.length) * 100)/3).toFixed(0);
+                                            let per = (((results.insertId / uniqueValuesArray.length) * 100) / 3).toFixed(0);
                                             setPercentage(per);
                                             setTotalData(uniqueValuesArray.length); setSavedData(count++);
                                         } else alert('Something went worng...');
@@ -222,7 +222,7 @@ const SearchIndexes = ({ navigation }) => {
         storeBibleKeyWords();
     }
     const storeBibleKeyWords = async () => {
-        setIsStore(false);setModalVisible(true);
+        setIsStore(false); setModalVisible(true);
         console.log('storing bible');
         await db.transaction((tx) => {
             tx.executeSql(
@@ -279,20 +279,20 @@ const SearchIndexes = ({ navigation }) => {
                                 obj.After = uniqueValues,
                                 uniqueValuesArray.push(obj);
                         });
-                        let count=1;
+                        let count = 1;
                         uniqueValuesArray.forEach(stopWord => {
-                                tx.executeSql(
-                                    'INSERT INTO StopWords (TextId,Keywords,BookName ) VALUES (?,?,?)',
-                                    [stopWord.Id, stopWord.After, 'Bible'],
-                                    (tx, results) => {
-                                        console.log('Inserted Id ', results.insertId);
-                                        if (results.rowsAffected > 0) {
-                                            let per = (((results.insertId / uniqueValuesArray.length) * 100)/3).toFixed(0);
-                                            setPercentage(per);
-                                            setTotalData(uniqueValuesArray.length); setSavedData(count++);
-                                        } else alert('Something went worng...');
-                                    }
-                                );
+                            tx.executeSql(
+                                'INSERT INTO AllKeyWords (ReferenceId,Keywords,BookName ) VALUES (?,?,?)',
+                                [stopWord.Id, stopWord.After, 'Bible'],
+                                (tx, results) => {
+                                    console.log('Inserted Id ', results.insertId);
+                                    if (results.rowsAffected > 0) {
+                                        let per = (((results.insertId / uniqueValuesArray.length) * 100) / 3).toFixed(0);
+                                        setPercentage(per);
+                                        setTotalData(uniqueValuesArray.length); setSavedData(count++);
+                                    } else alert('Something went worng...');
+                                }
+                            );
                         });
                     });//read file end
                     console.log('........................END...................');
@@ -305,31 +305,32 @@ const SearchIndexes = ({ navigation }) => {
         console.log(';;;;');
         let keywordsList = [];
         //read keywords from Quran_KeyWords
+        var temp = [];
         await db.transaction(function (txn) {
             txn.executeSql(
-                "SELECT * FROM StopWords",
+                "SELECT * FROM Quran",
                 [],
-                function (tx, res) {
-                    var temp = [];
+                function (txx, res) {
+                    console.log('length : ', res.rows.length);
                     for (let i = 0; i < res.rows.length; ++i)
                         temp.push(res.rows.item(i).Keywords);
                     temp.forEach(element => {
                         if (element != "") {
-                            let ele = "" + element;
+                            let ele = "" + element.replace(/[`~!@#$%^&*()_|+\=?;.<>\{\}\[\]\\\/]/gi, '');
                             let e = ele.split(','); //to store only one word in each index
                             e.forEach(element => {
-                                keywordsList.push(element);
+                                let ele= element.charAt(0).toUpperCase() + element.substring(1)
+                                keywordsList.push(ele);
                                 // setData(data => [...data, { KeyWord: element, Book: 'Quran' }])
                             });
                         }
                     });
                     // console.log(keywordsList);
                     let unique = [...new Set(keywordsList)];
-                    // console.log(removeRepeatedWords);
-
-                    unique.forEach((element, i) => {
-                        RNFS.readFileAssets('SynonymsList.txt', 'ascii').then((res) => {
-                            let newFile = res.split('\n');
+                    // console.log(unique);
+                    RNFS.readFileAssets('SynonymsList.txt', 'ascii').then((res) => {
+                        let newFile = res.split('\n');
+                        unique.forEach((element, i) => {
                             let fileWord, fileSynonymsList;
                             let matchingIndex = -1;
                             for (let index = 0; index < newFile.length; index++) { //synonyms loop start
@@ -337,6 +338,7 @@ const SearchIndexes = ({ navigation }) => {
                                 [fileWord, fileSynonymsList] = fileData.split(/\t|\s/);
                                 if (element.toLocaleLowerCase() === fileWord.toLocaleLowerCase()) {
                                     matchingIndex = index;
+                                    console.log('word matched',fileWord,element);
                                 }
                             }
                             if (matchingIndex != -1) {
@@ -364,6 +366,7 @@ const SearchIndexes = ({ navigation }) => {
                         });
                     });
                 });
+
         });
     }
     const storeSynonymsAndWords = (word, synonymsList) => {
@@ -431,9 +434,11 @@ const SearchIndexes = ({ navigation }) => {
     }
 
     useEffect(async () => {
-        // setIsStore(true);
-        await storeQuranKeyWords();
+        setIsStore(false);
+        // await storeQuranKeyWords();
         // await storeBibleKeyWords();
+        // await getKeywordsAndStoreSynonyms();
+        getKeyWords();
         // getSynonyms();
     }, [])
 
@@ -450,48 +455,54 @@ const SearchIndexes = ({ navigation }) => {
                     if (results.rows.length > 0) {
                         for (let i = 0; i < results.rows.length; ++i)
                             temp.push(results.rows.item(i).Synonym);
+                        var arr = [];
                         temp.forEach(element => {
                             // console.log('element', element);
                             setSearchArray(data => [...data, { Syn: element }]);
                             lst.push(element);
                             let searchWord = element;
-                            var arr = [];
                             // `SELECT * FROM ${tableName} Where AyatText like '%${element}%'`,
                             tx.executeSql(
                                 `SELECT * FROM ${tableName} WHERE AyatText like '${element} %' or AyatText like'% ${element}' or AyatText like'% ${element} %' or AyatText like '${element}' or AyatText REGEXP ' ${element}(,|;|.") ' or AyatText REGEXP ' (,|;|.")${element} '`,
                                 [],
                                 (tx, results) => {
-                                    rowsLength = results.rows.length;
+                                    let rowsLength = results.rows.length;
                                     // console.log(element, rowsLength);
                                     for (let i = 0; i < results.rows.length; ++i)
                                         arr.push(results.rows.item(i));
+                                    console.log(rowsLength);
                                     if (rowsLength > 0) {
                                         if (rowsLength > 100) {
                                             for (let index = 0; index < 100; index++) {
                                                 const element = arr[index];
+                                                let found = data.some(s => s.Id == element.Id);
                                                 // console.log(element);
-                                                setData(data => [...data,
-                                                {
-                                                    Id: element.Id,
-                                                    SurahId: element.SurahId,
-                                                    AyatId: element.AyatId,
-                                                    AyatText: element.AyatText,
-                                                    SearchWord: text,
+                                                if (found == false) {
+                                                    setData(data => [...data,
+                                                    {
+                                                        Id: element.Id,
+                                                        SurahId: element.SurahId,
+                                                        AyatId: element.AyatId,
+                                                        AyatText: element.AyatText,
+                                                        SearchWord: text,
+                                                    }
+                                                    ]);
                                                 }
-                                                ]);
                                             }
                                         } else {
                                             arr.forEach(element => {
-                                                // console.log(element);
-                                                setData(data => [...data,
-                                                {
-                                                    Id: element.Id,
-                                                    SurahId: element.SurahId,
-                                                    AyatId: element.AyatId,
-                                                    AyatText: element.AyatText,
-                                                    SearchWord: text,
+                                                let found = data.some(s => s.Id == element.Id);
+                                                if (found == false) {
+                                                    setData(data => [...data,
+                                                    {
+                                                        Id: element.Id,
+                                                        SurahId: element.SurahId,
+                                                        AyatId: element.AyatId,
+                                                        AyatText: element.AyatText,
+                                                        SearchWord: text,
+                                                    }
+                                                    ]);
                                                 }
-                                                ]);
                                             });
                                         }
                                         setIsFetched(false);
@@ -507,7 +518,7 @@ const SearchIndexes = ({ navigation }) => {
                                 `SELECT * FROM ${tableName} WHERE AyatText like '${text} %' or AyatText like'% ${text}' or AyatText like'% ${text} %' or AyatText like '${text}' or AyatText REGEXP ' ${text}(,|;|.?") ' or AyatText REGEXP ' (,|;|.?")${text} ' `,
                                 [],
                                 (tx, results) => {
-                                    rowsLength = results.rows.length;
+                                    let rowsLength = results.rows.length;
                                     console.log('else rows..', rowsLength);
                                     if (rowsLength < 100) {
                                         for (let i = 0; i < results.rows.length; ++i)
@@ -564,7 +575,7 @@ const SearchIndexes = ({ navigation }) => {
                                 `SELECT * FROM ${tableName} WHERE HadeesText like '${element} %' or HadeesText like'% ${element}' or HadeesText like'% ${element} %' or HadeesText like '${element}' or HadeesText REGEXP ' ${element}(,|;|.?") ' or HadeesText REGEXP ' (,|;|.?")${element} ' `,
                                 [],
                                 (tx, results) => {
-                                    rowsLength = results.rows.length;
+                                    let rowsLength = results.rows.length;
                                     console.log(rowsLength);
                                     for (let i = 0; i < results.rows.length; ++i)
                                         arr.push(results.rows.item(i));
@@ -572,31 +583,35 @@ const SearchIndexes = ({ navigation }) => {
                                         if (rowsLength > 100) {
                                             for (let index = 0; index < 100; index++) {
                                                 const element = arr[index];
-                                                // console.log(element);
-                                                setData(data => [...data,
-                                                {
-                                                    Id: element.Id,
-                                                    JildNo: element.JildNo,
-                                                    HadeesNo: element.HadeesNo,
-                                                    NarratedBy: element.NarratedBy,
-                                                    HadeesText: element.HadeesText,
-                                                    SearchWord: text,
+                                                let found = data.some(s => s.Id == element.Id);
+                                                if (found == false) {
+                                                    setData(data => [...data,
+                                                    {
+                                                        Id: element.Id,
+                                                        JildNo: element.JildNo,
+                                                        HadeesNo: element.HadeesNo,
+                                                        NarratedBy: element.NarratedBy,
+                                                        HadeesText: element.HadeesText,
+                                                        SearchWord: text,
+                                                    }
+                                                    ]);
                                                 }
-                                                ]);
                                             }
                                         } else {
                                             arr.forEach(element => {
-                                                // console.log(element);
-                                                setData(data => [...data,
-                                                {
-                                                    Id: element.Id,
-                                                    JildNo: element.JildNo,
-                                                    HadeesNo: element.HadeesNo,
-                                                    NarratedBy: element.NarratedBy,
-                                                    HadeesText: element.HadeesText,
-                                                    SearchWord: text,
+                                                let found = data.some(s => s.Id == element.Id);
+                                                if (found == false) {
+                                                    setData(data => [...data,
+                                                    {
+                                                        Id: element.Id,
+                                                        JildNo: element.JildNo,
+                                                        HadeesNo: element.HadeesNo,
+                                                        NarratedBy: element.NarratedBy,
+                                                        HadeesText: element.HadeesText,
+                                                        SearchWord: text,
+                                                    }
+                                                    ]);
                                                 }
-                                                ]);
                                             });
                                         }
                                         setIsFetched(false);
@@ -611,7 +626,7 @@ const SearchIndexes = ({ navigation }) => {
                                 `SELECT * FROM ${tableName} WHERE HadeesText like '${text} %' or HadeesText like'% ${text}' or HadeesText like'% ${text} %' or HadeesText like '${text}' or HadeesText REGEXP ' ${text}(,|;|.?") ' or HadeesText REGEXP ' (,|;|.?")${text} ' `,
                                 [],
                                 (tx, results) => {
-                                    rowsLength = results.rows.length;
+                                    let rowsLength = results.rows.length;
                                     console.log(rowsLength);
                                     if (rowsLength < 100) {
                                         for (let i = 0; i < results.rows.length; ++i)
@@ -669,7 +684,7 @@ const SearchIndexes = ({ navigation }) => {
                                 `SELECT * FROM ${tableName} WHERE VerseText like '${element} %' or VerseText like'% ${element}' or VerseText like'% ${element} %' or VerseText like '${element}' or VerseText REGEXP ' ${element}(,|;|.?") ' or VerseText REGEXP ' (,|;|.?")${element} ' `,
                                 [],
                                 (tx, results) => {
-                                    rowsLength = results.rows.length;
+                                    let rowsLength = results.rows.length;
                                     console.log(element, rowsLength);
                                     for (let i = 0; i < results.rows.length; ++i)
                                         arr.push(results.rows.item(i));
@@ -677,29 +692,33 @@ const SearchIndexes = ({ navigation }) => {
                                         if (rowsLength > 100) {
                                             for (let index = 0; index < 100; index++) {
                                                 const element = arr[index];
-                                                // console.log(element);
-                                                setData(data => [...data,
-                                                {
-                                                    Id: element.Id,
-                                                    ChapterNo: element.ChapterNo,
-                                                    VerseNo: element.VerseNo,
-                                                    VerseText: element.VerseText,
-                                                    SearchWord: text,
+                                                let found = data.some(s => s.Id == element.Id);
+                                                if (found == false) {
+                                                    setData(data => [...data,
+                                                    {
+                                                        Id: element.Id,
+                                                        ChapterNo: element.ChapterNo,
+                                                        VerseNo: element.VerseNo,
+                                                        VerseText: element.VerseText,
+                                                        SearchWord: text,
+                                                    }
+                                                    ]);
                                                 }
-                                                ]);
                                             }
                                         } else {
                                             arr.forEach(element => {
-                                                // console.log(element);
-                                                setData(data => [...data,
-                                                {
-                                                    Id: element.Id,
-                                                    ChapterNo: element.ChapterNo,
-                                                    VerseNo: element.VerseNo,
-                                                    VerseText: element.VerseText,
-                                                    SearchWord: text,
+                                                let found = data.some(s => s.Id == element.Id);
+                                                if (found == false) {
+                                                    setData(data => [...data,
+                                                    {
+                                                        Id: element.Id,
+                                                        ChapterNo: element.ChapterNo,
+                                                        VerseNo: element.VerseNo,
+                                                        VerseText: element.VerseText,
+                                                        SearchWord: text,
+                                                    }
+                                                    ]);
                                                 }
-                                                ]);
                                             });
                                         }
                                         setIsFetched(false);
@@ -714,7 +733,7 @@ const SearchIndexes = ({ navigation }) => {
                                 `SELECT * FROM ${tableName} WHERE VerseText like '${text} %' or VerseText like'% ${text}' or VerseText like'% ${text} %' or VerseText like '${text}' or VerseText REGEXP ' ${text}(,|;|.?") ' or VerseText REGEXP ' (,|;|.?")${text} ' `,
                                 [],
                                 (tx, results) => {
-                                    rowsLength = results.rows.length;
+                                    let rowsLength = results.rows.length;
                                     console.log(rowsLength);
                                     if (rowsLength < 100) {
                                         for (let i = 0; i < results.rows.length; ++i)
@@ -890,7 +909,7 @@ const SearchIndexes = ({ navigation }) => {
                         <ActivityIndicator size="large" color="red" />
                     </View>
                 ) : (
-                    <View>
+                    <View style={{ flex: 1 }}>
                         <IModal
                             percentage={percentage}
                             savedRecord={savedData}
