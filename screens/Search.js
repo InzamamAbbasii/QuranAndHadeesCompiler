@@ -24,6 +24,9 @@ const Search = ({ navigation }) => {
   const [percentage, setPercentage] = useState(0);
   const [totalData, setTotalData] = useState(0);
   const [savedData, setSavedData] = useState(0);
+  const [numOfIteration, setNumOfIteration] = useState(0);
+  const [loading, setLoading] = useState(true);
+
   let lst = [];
   var radio_props = [
     { label: 'Quran ', value: 'Quran' },
@@ -533,129 +536,298 @@ const Search = ({ navigation }) => {
   useEffect(async () => {
     // setIsStore(true);
     setIsStore(false);
-    console.log('.............start...............');
-    await storeQuranKeyWords();
-    await storeHadeesKeyWords();
-    await storeBibleKeyWords();
-    console.log('.............end...............');
+    // console.log('.............start...............');
+    // await storeQuranKeyWords();
+    // await storeHadeesKeyWords();
+    // await storeBibleKeyWords();
+    // console.log('.............end...............');
     // getSynonyms();
   }, [])
 
+  useEffect(() => {
+    console.log('.....', dataCopy.length);
+    if (gettingDataFor == 'Quran')
+      getMoreQuranData();
+    else if (gettingDataFor == 'Hadees')
+      getMoreHadeesData();
+    else
+      getMoreBibleData();
 
-  const getQuranData = (text, tableName) => {
-    setSearchArray([]);
+  }, [dataCopy]);
+  // ................................GET MORE DATA ON FLATLIST END REACHED......................................
+  const getMoreQuranData = () => {
+    console.log('called...');
+    const Record_Per_Fetch = 10;
+    setLoading(true);
+    console.log(`Data Length ${data.length}  ,  DataCopy Length  ${dataCopy.length}  ,  NumOfIteration ${numOfIteration}`);
+    if (data.length < dataCopy.length) {
+      // console.log('inside main if',dataCopy.length,Record_Per_Fetch,numOfIteration,(numOfIteration+Record_Per_Fetch));
+      if (dataCopy.length < Record_Per_Fetch || dataCopy.length < (numOfIteration + Record_Per_Fetch)) {
+        console.log('if');
+        for (let index = data.length; index < dataCopy.length; index++) {
+          const element = dataCopy[index];
+          setData(data => [...data,
+          {
+            Id: element.Id,
+            SurahId: element.SurahId,
+            AyatId: element.AyatId,
+            AyatText: element.AyatText,
+            // SearchWord: text,
+          }
+          ]);
+          setNumOfIteration(numOfIteration + Record_Per_Fetch);
+        }
+      } else {
+        console.log('else ', numOfIteration, Record_Per_Fetch);
+        for (let index = numOfIteration; index < numOfIteration + Record_Per_Fetch; index++) {
+          const element = dataCopy[index];
+          setData(data => [...data,
+          {
+            Id: element.Id,
+            SurahId: element.SurahId,
+            AyatId: element.AyatId,
+            AyatText: element.AyatText,
+            // SearchWord: text,
+          }
+          ]);
+        }
+        setNumOfIteration(numOfIteration + Record_Per_Fetch);
+      }
+    }
+    else {
+      console.log('done');
+      setLoading(false);
+    }
+  }
+  const getMoreHadeesData = () => {
+    console.log('called...');
+    const Record_Per_Fetch = 10;
+    setLoading(true);
+    console.log(`Data Length ${data.length}  ,  DataCopy Length  ${dataCopy.length}  ,  NumOfIteration ${numOfIteration}`);
+    if (data.length < dataCopy.length) {
+      // console.log('inside main if',dataCopy.length,Record_Per_Fetch,numOfIteration,(numOfIteration+Record_Per_Fetch));
+      if (dataCopy.length < Record_Per_Fetch || dataCopy.length < (numOfIteration + Record_Per_Fetch)) {
+        console.log('if');
+        for (let index = data.length; index < dataCopy.length; index++) {
+          const element = dataCopy[index];
+          setData(data => [...data,
+          {
+            Id: element.Id,
+            JildNo: element.JildNo,
+            HadeesNo: element.HadeesNo,
+            NarratedBy: element.NarratedBy,
+            HadeesText: element.HadeesText,
+            // SearchWord: text,
+          }
+          ]);
+          setNumOfIteration(numOfIteration + Record_Per_Fetch);
+        }
+      } else {
+        console.log('else ', numOfIteration, Record_Per_Fetch);
+        for (let index = numOfIteration; index < numOfIteration + Record_Per_Fetch; index++) {
+          const element = dataCopy[index];
+          setData(data => [...data,
+          {
+            Id: element.Id,
+            JildNo: element.JildNo,
+            HadeesNo: element.HadeesNo,
+            NarratedBy: element.NarratedBy,
+            HadeesText: element.HadeesText,
+            // SearchWord: text,
+          }
+          ]);
+        }
+        setNumOfIteration(numOfIteration + Record_Per_Fetch);
+      }
+    }
+    else {
+      console.log('done');
+      setLoading(false);
+    }
+
+  }
+  const getMoreBibleData = () => {
+    console.log('called...');
+    const Record_Per_Fetch = 10;
+    setLoading(true);
+    console.log(`Data Length ${data.length}  ,  DataCopy Length  ${dataCopy.length}  ,  NumOfIteration ${numOfIteration}`);
+    if (data.length < dataCopy.length) {
+      // console.log('inside main if',dataCopy.length,Record_Per_Fetch,numOfIteration,(numOfIteration+Record_Per_Fetch));
+      if (dataCopy.length < Record_Per_Fetch || dataCopy.length < (numOfIteration + Record_Per_Fetch)) {
+        console.log('if');
+        for (let index = data.length; index < dataCopy.length; index++) {
+          const element = dataCopy[index];
+          setData(data => [...data,
+          {
+            Id: element.Id,
+            ChapterNo: element.ChapterNo,
+            VerseNo: element.VerseNo,
+            VerseText: element.VerseText,
+            BookName: element.BookName,
+            // SearchWord: text,
+          }
+          ]);
+          setNumOfIteration(numOfIteration + Record_Per_Fetch);
+        }
+      } else {
+        console.log('else ', numOfIteration, Record_Per_Fetch);
+        for (let index = numOfIteration; index < numOfIteration + Record_Per_Fetch; index++) {
+          const element = dataCopy[index];
+          setData(data => [...data,
+          {
+            Id: element.Id,
+            ChapterNo: element.ChapterNo,
+            VerseNo: element.VerseNo,
+            VerseText: element.VerseText,
+            BookName: element.BookName,
+
+            // SearchWord: text,
+          }
+          ]);
+        }
+        setNumOfIteration(numOfIteration + Record_Per_Fetch);
+      }
+    }
+    else {
+      console.log('done');
+      setLoading(false);
+    }
+
+  }
+  // ................................END GETTING MORE DATA ON FLATLIST END REACHED......................................
+
+  const getQuranData = async (text, tableName) => {
+    setSearchArray([]); setDataCopy([]); setNumOfIteration(0);
     console.log('else executed');
     setSearchArray(data => [...data, { Syn: text }]);
-    db.transaction((tx) => {
+    await db.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${tableName} WHERE AyatText like '${text} %' or AyatText like'% ${text}' or AyatText like'% ${text} %' or AyatText like '${text}' or AyatText REGEXP ' ${text}(,|;|.?") ' or AyatText REGEXP ' (,|;|.?")${text} '`,
         [],
         (tx, results) => {
-          var temp = [];
+          var arr = [];
           let rowsLength = results.rows.length;
           console.log('else rows..', rowsLength);
-          if (rowsLength < 50) {
-            for (let i = 0; i < results.rows.length; ++i)
-              temp.push(results.rows.item(i));
-          } else {
-            for (let i = 0; i < 50; ++i)
-              temp.push(results.rows.item(i));
-          }
           if (rowsLength > 0) {
-            temp.forEach(element => {
-              setData(data => [...data,
-              {
-                Id: element.Id,
-                SurahId: element.SurahId,
-                AyatId: element.AyatId,
-                AyatText: element.AyatText,
-                SearchWord: text,
+            for (let i = 0; i < results.rows.length; ++i) {
+              let found = arr.some(s => s.Id == results.rows.item(i).Id);
+              if (found == false) {
+                arr.push(results.rows.item(i));
               }
-              ]);
-            });
+            }
+            setDataCopy(arr);
             setIsFetched(false);
           } else {
             setIsFetched(false);
             alert("No record Found...")
           }
+          // if (rowsLength < 50) {
+          //   for (let i = 0; i < results.rows.length; ++i)
+          //     temp.push(results.rows.item(i));
+          // } else {
+          //   for (let i = 0; i < 50; ++i)
+          //     temp.push(results.rows.item(i));
+          // }
+          // if (rowsLength > 0) {
+          //   temp.forEach(element => {
+          //     setData(data => [...data,
+          //     {
+          //       Id: element.Id,
+          //       SurahId: element.SurahId,
+          //       AyatId: element.AyatId,
+          //       AyatText: element.AyatText,
+          //       SearchWord: text,
+          //     }
+          //     ]);
+          //   });
+          //   setIsFetched(false);
+          // } else {
+          //   setIsFetched(false);
+          //   alert("No record Found...")
+          // }
         });
     });
   }
-  const getHadeesData = (text, tableName) => {
-    setSearchArray([]);
+  const getHadeesData = async (text, tableName) => {
+    setSearchArray([]); setDataCopy([]); setNumOfIteration(0);
     setSearchArray(data => [...data, { Syn: text }]);
     // `SELECT * FROM ${tableName} WHERE HadeesText like '%${text}%'`,
-    db.transaction((tx) => {
+    await db.transaction((tx) => {
       tx.executeSql(
         `SELECT * FROM ${tableName} WHERE HadeesText like '${text} %' or HadeesText like'% ${text}' or HadeesText like'% ${text} %' or HadeesText like '${text}' or HadeesText REGEXP ' ${text}(,|;|.?") ' or HadeesText REGEXP ' (,|;|.?")${text} ' `,
         [],
         (tx, results) => {
-          var temp = [];
+          var arr = [];
           let rowsLength = results.rows.length;
-          console.log(rowsLength);
-          if (rowsLength < 100) {
-            for (let i = 0; i < results.rows.length; ++i)
-              temp.push(results.rows.item(i));
-          } else {
-            for (let i = 0; i < 100; ++i)
-              temp.push(results.rows.item(i));
-          }
+          console.log('else rows..', rowsLength);
           if (rowsLength > 0) {
-            temp.forEach(element => {
-              setData(data => [...data,
-              {
-                Id: element.Id,
-                JildNo: element.JildNo,
-                HadeesNo: element.HadeesNo,
-                NarratedBy: element.NarratedBy,
-                HadeesText: element.HadeesText,
-                SearchWord: text,
+            for (let i = 0; i < results.rows.length; ++i) {
+              let found = arr.some(s => s.Id == results.rows.item(i).Id);
+              if (found == false) {
+                arr.push(results.rows.item(i));
               }
-              ]);
-            });
+            }
+            setDataCopy(arr);
             setIsFetched(false);
           } else {
             setIsFetched(false);
-            alert("No record Found...")
+            alert('No record found');
           }
+          // var temp = [];
+          // let rowsLength = results.rows.length;
+          // console.log(rowsLength);
+          // if (rowsLength < 100) {
+          //   for (let i = 0; i < results.rows.length; ++i)
+          //     temp.push(results.rows.item(i));
+          // } else {
+          //   for (let i = 0; i < 100; ++i)
+          //     temp.push(results.rows.item(i));
+          // }
+          // if (rowsLength > 0) {
+          //   temp.forEach(element => {
+          //     setData(data => [...data,
+          //     {
+          //       Id: element.Id,
+          //       JildNo: element.JildNo,
+          //       HadeesNo: element.HadeesNo,
+          //       NarratedBy: element.NarratedBy,
+          //       HadeesText: element.HadeesText,
+          //       SearchWord: text,
+          //     }
+          //     ]);
+          //   });
+          //   setIsFetched(false);
+          // } else {
+          //   setIsFetched(false);
+          //   alert("No record Found...")
+          // }
         });
     })
   }
-  const getBibleData = (text, tableName) => {
-    setSearchArray([]);
+  const getBibleData = async (text, tableName) => {
+    setSearchArray([]); setDataCopy([]); setNumOfIteration(0);
     setSearchArray(data => [...data, { Syn: text }]);
-    db.transaction((tx) => {
+    await db.transaction((tx) => {
       // `SELECT * FROM ${tableName} Where VerseText like '%${text}%'`,
       tx.executeSql(
-        `SELECT * FROM ${tableName} WHERE VerseText like '${text} %' or VerseText like'% ${text}' or VerseText like'% ${text} %' or VerseText like '${text}' or VerseText REGEXP ' ${text}(,|;|.?") ' or VerseText REGEXP ' (,|;|.?")${text} ' `,
+        `SELECT * FROM ${tableName} JOIN BibleBooks on Bible1.BookId=BibleBooks.Id WHERE VerseText like '${text} %' or VerseText like'% ${text}' or VerseText like'% ${text} %' or VerseText like '${text}' or VerseText REGEXP ' ${text}(,|;|.?") ' or VerseText REGEXP ' (,|;|.?")${text} ' `,
         [],
         (tx, results) => {
-          var temp = [];
+          var arr = [];
           let rowsLength = results.rows.length;
-          console.log(rowsLength);
-          if (rowsLength < 100) {
-            for (let i = 0; i < results.rows.length; ++i)
-              temp.push(results.rows.item(i));
-          } else {
-            for (let i = 0; i < 100; ++i)
-              temp.push(results.rows.item(i));
-          }
+          console.log('else rows..', rowsLength);
           if (rowsLength > 0) {
-            temp.forEach(element => {
-              setData(data => [...data,
-              {
-                Id: element.Id,
-                ChapterNo: element.ChapterNo,
-                VerseNo: element.VerseNo,
-                VerseText: element.VerseText,
-                SearchWord: text,
+            for (let i = 0; i < results.rows.length; ++i) {
+              let found = arr.some(s => s.Id == results.rows.item(i).Id);
+              if (found == false) {
+                arr.push(results.rows.item(i));
               }
-              ]);
-            });
+            }
+            setDataCopy(arr);
             setIsFetched(false);
           } else {
             setIsFetched(false);
-            alert("No record Found...")
+            alert('No record found');
           }
         });
     });
@@ -676,102 +848,6 @@ const Search = ({ navigation }) => {
       } else if (tableName == "Bible1") {
         getBibleData(text, tableName);
       }
-      // db.transaction((tx) => {
-      //     if (tableName == "Quran") {
-      //         tx.executeSql(
-      //             `SELECT * FROM ${tableName} Where AyatText like '%${text}%'`,
-      //             [],
-      //             (tx, results) => {
-      //                 rowsLength = results.rows.length;
-      //                 if(rowsLength<10){
-      //                     for (let i = 0; i < results.rows.length; ++i)
-      //                         temp.push(results.rows.item(i));
-      //                 }else{
-      //                     for (let i = 0; i < 10; ++i)
-      //                     temp.push(results.rows.item(i));
-      //                 }
-      //                 if (rowsLength > 0) {
-      //                     temp.forEach(element => {
-      //                         setData(data => [...data,
-      //                         {
-      //                             Id: element.Id,
-      //                             SurahId: element.SurahId,
-      //                             AyatId: element.AyatId,
-      //                             AyatText: element.AyatText,
-      //                         }
-      //                         ]);
-      //                     });
-      //                     setIsFetched(false);
-      //                 } else {
-      //                     setIsFetched(false);
-      //                     alert("No record Found...")
-      //                 }
-      //             });
-      //     } else if (tableName == "Hadees") {
-      //         tx.executeSql(
-      //             `SELECT * FROM ${tableName} Where HadeesText like '%${text}%'`,
-      //             [],
-      //             (tx, results) => {
-      //                 rowsLength = results.rows.length;
-      //                 console.log('...', rowsLength);
-      //                 if(rowsLength<10){
-      //                     for (let i = 0; i < results.rows.length; ++i)
-      //                         temp.push(results.rows.item(i));
-      //                 }else{
-      //                     for (let i = 0; i < 10; ++i)
-      //                     temp.push(results.rows.item(i));
-      //                 }
-      //                 if (rowsLength > 0) {
-      //                     temp.forEach(element => {
-      //                         setData(data => [...data,
-      //                         {
-      //                             Id: element.Id,
-      //                             JildNo: element.JildNo,
-      //                             HadeesNo: element.HadeesNo,
-      //                             NarratedBy: element.NarratedBy,
-      //                             HadeesText: element.HadeesText,
-      //                         }
-      //                         ]);
-      //                     });
-      //                     setIsFetched(false);
-      //                 } else {
-      //                     setIsFetched(false);
-      //                     alert("No record Found...")
-      //                 }
-      //             });
-      //     } else if (tableName == "Bible1") {
-      //         tx.executeSql(
-      //             `SELECT * FROM ${tableName} Where VerseText like '%${text}%'`,
-      //             [],
-      //             (tx, results) => {
-      //                 rowsLength = results.rows.length;
-      //                 console.log('...', rowsLength);
-      //                 if(rowsLength<10){
-      //                     for (let i = 0; i < results.rows.length; ++i)
-      //                         temp.push(results.rows.item(i));
-      //                 }else{
-      //                     for (let i = 0; i < 10; ++i)
-      //                     temp.push(results.rows.item(i));
-      //                 }
-      //                 if (rowsLength > 0) {
-      //                     temp.forEach(element => {
-      //                         setData(data => [...data,
-      //                         {
-      //                             Id: element.Id,
-      //                             ChapterNo: element.ChapterNo,
-      //                             VerseNo: element.VerseNo,
-      //                             VerseText: element.VerseText,
-      //                         }
-      //                         ]);
-      //                     });
-      //                     setIsFetched(false);
-      //                 } else {
-      //                     setIsFetched(false);
-      //                     alert("No record Found...")
-      //                 }
-      //             });
-      //     }
-      // });
     } else {
       setData([]);
       alert('Please enter Word to search..');
@@ -801,6 +877,15 @@ const Search = ({ navigation }) => {
       </View>
     );
   }
+  const renderFooter = () => {
+    return (
+      <View>
+        {
+          loading && <ActivityIndicator color="red" size={'large'} />
+        }
+      </View>
+    );
+  };
   return (
     <View style={styles.container}>
       {
@@ -809,7 +894,7 @@ const Search = ({ navigation }) => {
             <ActivityIndicator size="large" color="red" />
           </View>
         ) : (
-          <View style={{flex:1}}>
+          <View style={{ flex: 1 }}>
 
             <IModal
               percentage={percentage}
@@ -825,29 +910,37 @@ const Search = ({ navigation }) => {
             />
 
             <KeepAwake />
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <TextInput style={styles.input}
-                onChangeText={(text) => setSearch(text)}
-                placeholder={'search here...'} placeholderTextColor={'gray'} />
-              <TouchableOpacity onPress={() => searchResult(search, tableName)}
-                style={{ height: 40, backgroundColor: '#015c92', flex: .5, borderRadius: 10, justifyContent: 'center' }}>
-                <Text style={{ fontSize: 20, color: '#fff', textAlign: 'center' }}>Search</Text>
-              </TouchableOpacity>
+            <View style={{ padding: 10, backgroundColor: '#28D6C0', borderBottomColor: '#222', borderBottomWidth: 2, marginBottom: 10, }}>
+              <View style={styles.searchBar}>
+                <TextInput
+                  style={{ flex: 1 }}
+                  onChangeText={(text) => setSearch(text)}
+                  placeholder={'search here...'} placeholderTextColor={'gray'} />
+                <Icon name='search' color={'#fff'} size={30}
+                  onPress={() => searchResult(search, tableName)}
+                  style={{ backgroundColor: '#28D6C0', width: 50, textAlign: 'center' }} />
+                {/* <TouchableOpacity onPress={() => searchResult(search, tableName)}
+                  style={{ height: 40, backgroundColor: '#015c92',flex:.5, borderRadius: 10, justifyContent: 'center' }}>
+                  <Text style={{ fontSize: 20, color: '#fff', textAlign: 'center' }}>Search</Text>
+                </TouchableOpacity> */}
+              </View>
+
+              <View style={{ paddingVertical: 10, flexDirection: 'row' }}>
+                {/* <Text style={{ fontSize: 18 }}>Search In:</Text> */}
+                <RadioForm style={{ flex: 1, justifyContent: 'space-evenly' }}
+                  radio_props={radio_props}
+                  initial={0}
+                  formHorizontal={true}
+                  buttonColor={'#000'}
+                  buttonOuterSize={25}
+                  selectedButtonColor={"#555"}
+                  selectedLabelColor={"#fff"}
+                  labelStyle={{ fontSize: 18, fontWeight: 'bold' }}
+                  onPress={(value) => setTableName(value)}
+                />
+              </View>
             </View>
-            <View style={{ backgroundColor: '#fff', paddingVertical: 10, flexDirection: 'row', alignItems: 'center', marginBottom: 10, }}>
-              <Text style={{ fontSize: 18 }}>Search In:</Text>
-              <RadioForm
-                radio_props={radio_props}
-                initial={0}
-                formHorizontal={true}
-                buttonColor={'#50C900'}
-                buttonOuterSize={25}
-                selectedButtonColor={"#88cdf6"}
-                selectedLabelColor={"blue"}
-                labelStyle={{ fontSize: 15, fontWeight: 'bold' }}
-                onPress={(value) => setTableName(value)}
-              />
-            </View>
+
             {
               isFetched == true ? (
                 <View style={[styles.container, styles.horizontal]}>
@@ -861,7 +954,10 @@ const Search = ({ navigation }) => {
                     initialNumToRender={10}
                     maxToRenderPerBatch={10}
                     windowSize={10}
-                    ListHeaderComponent={<ListHeader resultLength={data.length} />}
+                    // ListHeaderComponent={<ListHeader resultLength={data.length} />}
+                    onEndReachedThreshold={0.01}
+                    onEndReached={getMoreQuranData}
+                    ListFooterComponent={renderFooter}
                     renderItem={(item, index) =>
                       <TouchableOpacity onPress={() => navigation.navigate('Detail', {
                         TableName: tableName,
@@ -871,8 +967,8 @@ const Search = ({ navigation }) => {
                         SearchWord: item.item.SearchWord,
                         SearchWord1: searchArray,
                       })}
-                        style={{ flex: 1, width: '97%', alignSelf: 'center', padding: 10, borderRadius: 8, elevation: 5, marginBottom: 20, justifyContent: 'center', backgroundColor: '#fff' }}>
-                        <Text style={{ color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10, fontSize: 12 }} >Surah No {item.item.SurahId} , Ayat No {item.item.AyatId}</Text>
+                        style={styles.card}>
+                        <Text style={{ color: 'green', fontWeight: 'bold', paddingVertical: 10, fontSize: 12 }} >Surah No {item.item.SurahId} , Ayat No {item.item.AyatId}</Text>
                         <Text style={{ fontSize: 18, }} numberOfLines={1.5}>{item.item.AyatText}</Text>
                       </TouchableOpacity>
                     }
@@ -885,6 +981,9 @@ const Search = ({ navigation }) => {
                       initialNumToRender={10}
                       maxToRenderPerBatch={10}
                       windowSize={10}
+                      onEndReachedThreshold={0.01}
+                      onEndReached={getMoreHadeesData}
+                      ListFooterComponent={renderFooter}
                       renderItem={(item, index) =>
                         <TouchableOpacity onPress={() => navigation.navigate('Detail', {
                           TableName: tableName,
@@ -909,12 +1008,16 @@ const Search = ({ navigation }) => {
                       initialNumToRender={10}
                       maxToRenderPerBatch={10}
                       windowSize={10}
+                      onEndReachedThreshold={0.01}
+                      onEndReached={getMoreBibleData}
+                      ListFooterComponent={renderFooter}
                       renderItem={(item, index) =>
                         <TouchableOpacity onPress={() => navigation.navigate('Detail', {
                           TableName: tableName,
                           ChapterNo: item.item.ChapterNo,
                           VerseNo: item.item.VerseNo,
                           Text: item.item.VerseText,
+                          BookName: item.item.BookName,
                           SearchWord1: searchArray,
                           SearchWord: item.item.SearchWord,
                         })}
@@ -941,30 +1044,39 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#eee',
-    padding: 10,
+    backgroundColor: '#fff',
+    // padding: 10,
   },
   horizontal: {
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
   },
-  input: {
-    margin: 5,
-    flex: 1.5,
+  searchBar: {
+    flexDirection: 'row',
     height: 40,
-    color: '#000',
-    borderWidth: 1,
-    borderColor: '#000',
-    borderRadius: 30,
+    width: '90%',
     alignSelf: 'center',
-    paddingHorizontal: 15,
-    backgroundColor: '#ffffff'
+    borderWidth: 2,
+    borderColor: '#444',
+    // borderRadius: 70,
+    backgroundColor: '#fff'
   },
   text: {
     fontSize: 20,
     backgroundColor: '#fff',
     marginTop: 10,
     padding: 10
+  },
+  card: {
+    flex: 1,
+    width: '90%',
+    alignSelf: 'center',
+    padding: 10,
+    borderRadius: 8,
+    elevation: 5,
+    marginBottom: 17,
+    justifyContent: 'center',
+    backgroundColor: '#ccc'
   }
 })

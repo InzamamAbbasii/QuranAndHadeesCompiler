@@ -470,12 +470,12 @@ const Home = ({ navigation }) => {
             borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center'
           }}
           onPress={() => navigation.navigate('Search')}>
-          <Text style={{ color: '#fff', fontSize: 44, fontWeight: 'bold' }}>Search</Text>
+          <Text style={{ color: '#fff', fontSize: 32, fontWeight: 'bold' }}>Search</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{  backgroundColor: 'green', width: Dimensions.get('window').width / 2 - 30, height: Dimensions.get('window').width / 2 - 30,
             borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center',marginLeft:15}}
              onPress={() => navigation.navigate('SearchIndexes')}>
-          <Text style={{ color: '#fff', fontSize: 40, fontWeight: 'bold' }}>Indexes</Text>
+          <Text style={{ color: '#fff', fontSize: 32, fontWeight: 'bold' }}>Indexes</Text>
           
         </TouchableOpacity>
         

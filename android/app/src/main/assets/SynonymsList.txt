@@ -1,4 +1,4 @@
-Allah	Almighty,Author,Creator,deity,Divinity,Eternal,Everlasting,God,Godhead,Jehovah,King,Lord,Maker,Providence,Supreme Being,Yahweh
-God	Allah,Almighty,Author,Creator,deity,Divinity,Eternal,Everlasting,Godhead,Jehovah,King,Lord,Maker,Providence,Supreme Being,Yahweh
+Allah	Allah,Almighty,Author,Creator,deity,Divinity,Eternal,Everlasting,God,Godhead,Jehovah,King,Lord,Maker,Providence,Supreme Being,Yahweh
+God	God,Allah,Almighty,Author,Creator,deity,Divinity,Eternal,Everlasting,Godhead,Jehovah,King,Lord,Maker,Providence,Supreme Being,Yahweh
 Lord	Allah,God,baron,captain,czar,king,lion,magnate,mogul,monarch,Napoleon,prince,tycoon
-beneficent	benevolent, benignant, compassionate, good-hearted, humane, kind, kindhearted, kindly, softhearted, sympathetic, tender, tenderhearted, warmhearted
+beneficent	beneficent,benevolent, benignant, compassionate, good-hearted, humane, kind, kindhearted, kindly, softhearted, sympathetic, tender, tenderhearted, warmhearted

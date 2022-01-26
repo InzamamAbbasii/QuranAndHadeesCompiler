@@ -17,13 +17,13 @@ const Detail = ({ navigation, route }) => {
                     <>
                         <View style={{ padding: 10 }}>
                             <Text style={[styles.text, { color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10 }]} >Surah {route.params.SurahNo} : Ayat {route.params.AyatNo}</Text>
-                            {/* <Highlighter style={styles.text}
+                            <Highlighter style={styles.text}
                                 autoEscape={false}
                                 highlightStyle={{ backgroundColor: '#ffa200' }}
                                 searchWords={array}
                                 textToHighlight={route.params.Text}
-                            /> */}
-                            <Text style={styles.text}>{route.params.Text} </Text>
+                            />
+                            {/* <Text style={styles.text}>{route.params.Text} </Text> */}
                         </View>
                     </>
                 ) : (
@@ -31,22 +31,23 @@ const Detail = ({ navigation, route }) => {
                         <View style={{ padding: 10 }}>
                             <Text style={[styles.text, { color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10 }]} >Jild {route.params.JildNo} : Hadees {route.params.HadeesNo}</Text>
                             <Text style={[styles.text, { fontWeight: '500' }]}>{route.params.NarratedBy} </Text>
-                            <Text style={styles.text}>{route.params.Text} </Text>
-                            {/* <Highlighter style={styles.text}
+                            {/* <Text style={styles.text}>{route.params.Text} </Text> */}
+                            <Highlighter style={styles.text}
                                 highlightStyle={{ backgroundColor: '#ffa200' }}
                                 searchWords={array}
                                 textToHighlight={route.params.Text}
-                            /> */}
+                            />
                         </View>
                     ) : (
                         <View style={{ padding: 10 }}>
+                            <Text style={[styles.text, { color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10 }]} >Book Name :  {route.params.BookName}</Text>
                             <Text style={[styles.text, { color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 10 }]} >Chapter {route.params.ChapterNo} : Verse {route.params.VerseNo}</Text>
-                            <Text style={styles.text}>{route.params.Text} </Text>
-                            {/* <Highlighter style={styles.text}
+                            {/* <Text style={styles.text}>{route.params.Text} </Text> */}
+                            <Highlighter style={styles.text}
                                 highlightStyle={{ backgroundColor: '#ffa200' }}
                                 searchWords={array}
                                 textToHighlight={route.params.Text}
-                            /> */}
+                            />
                         </View>
                     )
                 )
