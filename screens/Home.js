@@ -316,7 +316,7 @@ const Home = ({ navigation }) => {
                 for (let index = 0; index < bibleWords.length; index++) {
                   const element = bibleWords[index];
                   // TODO:Store file data to database
-                 
+
                   if (element.Chapter === '1' && element.Verse === '1') {
                     // console.log(index, ++count);
                     // console.log('if');
@@ -334,20 +334,20 @@ const Home = ({ navigation }) => {
                     });
                   }
                   // else {
-                    db.transaction((txx) => {
-                      txx.executeSql(
-                        'INSERT INTO Bible1 (ChapterNo, VerseNo, VerseText,BookId) VALUES (?,?,?,?)',
-                        [element.Chapter, element.Verse, element.Text, count.toString()],
-                        (tx, results) => {
-                          if (results.rowsAffected > 0) {
-                            console.log(results.insertId,count,bookId);
-                            let per = ((results.insertId / bibleWords.length) * 100).toFixed(0);
-                            setPercentage(per);
-                            setTotalData(bibleWords.length); setSavedData(results.insertId);
-                          } else alert('Something went worng...');
-                        }
-                      );
-                    });
+                  db.transaction((txx) => {
+                    txx.executeSql(
+                      'INSERT INTO Bible1 (ChapterNo, VerseNo, VerseText,BookId) VALUES (?,?,?,?)',
+                      [element.Chapter, element.Verse, element.Text, count.toString()],
+                      (tx, results) => {
+                        if (results.rowsAffected > 0) {
+                          console.log(results.insertId, count, bookId);
+                          let per = ((results.insertId / bibleWords.length) * 100).toFixed(0);
+                          setPercentage(per);
+                          setTotalData(bibleWords.length); setSavedData(results.insertId);
+                        } else alert('Something went worng...');
+                      }
+                    );
+                  });
                   // }
 
                 }
@@ -414,7 +414,11 @@ const Home = ({ navigation }) => {
   }
   return (
     <ScrollView style={styles.container}>
-      <Text style={{ fontWeight: 'bold', color: '#0eab9e', fontSize: 40, textAlign: 'center', marginBottom: 20 }}>Quran,Hadees And Bible Compiler</Text>
+      <View style={{backgroundColor:'green',paddingVertical:30,borderBottomLeftRadius:40,borderBottomRightRadius:40}}>
+        <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 40, textAlign: 'center', marginBottom: 20 }}>
+          Quran,Hadees And Bible Compiler
+        </Text>
+      </View>
 
       <IModal
         percentage={percentage}
@@ -430,7 +434,7 @@ const Home = ({ navigation }) => {
       />
 
       <KeepAwake />
-      <View style={{ flexDirection: 'row', margin: 10}}>
+      <View style={{ flexDirection: 'row', margin: 10 }}>
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadQuran()}>
           <Image
@@ -445,11 +449,11 @@ const Home = ({ navigation }) => {
           />
         </TouchableOpacity>
       </View>
-      <View style={{ flexDirection: 'row', margin: 10}}>
+      <View style={{ flexDirection: 'row', margin: 10 }}>
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadBible()}>
           <Image
-            source={require('../assets/images/bible-cover-B7MRKJ.jpg')}
+            source={require('../assets/images/Bible.png')}
             style={styles.imageStyle}
           />
         </TouchableOpacity>
@@ -459,27 +463,47 @@ const Home = ({ navigation }) => {
             style={styles.imageStyle}
           />
         </TouchableOpacity> */}
+        <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('Search')}>
+          <Image
+            source={require('../assets/images/Search.png')}
+            style={styles.imageStyle}
+          />
+        </TouchableOpacity>
 
-        
       </View>
+      <View style={{ flexDirection: 'row', margin: 10, }}>
+
+        <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('SearchIndexes')}>
+          <Image
+            source={require('../assets/images/Indexes.png')}
+            style={styles.imageStyle}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={{
+          backgroundColor: 'green', width: Dimensions.get('window').width / 2 - 30, height: Dimensions.get('window').width / 2 - 30,
+          borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center', marginLeft: 15
+        }}
+          onPress={() => navigation.navigate('Synonyms')}>
+          <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}> ADD Synonyms</Text>
+
+        </TouchableOpacity>
+
+      </View>
+
+      {/* 
       <View style={{ flexDirection: 'row', margin: 10, justifyContent: 'center' }}>
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }}
           style={{
-            backgroundColor: 'green', width: Dimensions.get('window').width / 2 - 30, height: Dimensions.get('window').width / 2 - 30,
-            borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center'
+            backgroundColor: 'green', width: '95%', height: 60,
+            borderRadius: 10, justifyContent: 'center', alignItems: 'center', marginBottom: 10
           }}
-          onPress={() => navigation.navigate('Search')}>
-          <Text style={{ color: '#fff', fontSize: 32, fontWeight: 'bold' }}>Search</Text>
+          onPress={() => navigation.navigate('Synonyms')}>
+          <Text style={{ color: '#fff', fontSize: 20, fontWeight: 'bold' }}>Add Synonyms</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{  backgroundColor: 'green', width: Dimensions.get('window').width / 2 - 30, height: Dimensions.get('window').width / 2 - 30,
-            borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center',marginLeft:15}}
-             onPress={() => navigation.navigate('SearchIndexes')}>
-          <Text style={{ color: '#fff', fontSize: 32, fontWeight: 'bold' }}>Indexes</Text>
-          
-        </TouchableOpacity>
-        
-      </View>
+      </View> */}
+
 
     </ScrollView>
   );
@@ -489,8 +513,8 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e6b65e',
-    padding: 10,
+    backgroundColor: '#fff',
+    // padding: 10,
   },
   button: {
     backgroundColor: '#3a53a6',

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from "react";
+import { StyleSheet, Text, View, TextInput, ScrollView, FlatList, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { openDatabase } from 'react-native-sqlite-storage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import Highlighter from 'react-native-highlight-words';
 import IModal from "../src/components/IModal";
 import CongratsAlert from "../src/components/CongratsAlert";
@@ -9,6 +9,7 @@ import KeepAwake from "react-native-keep-awake";
 var RNFS = require('react-native-fs');
 const sw = require('remove-stopwords');
 import RadioForm from 'react-native-simple-radio-button';
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown'
 const SearchIndexes = ({ navigation }) => {
     var db = openDatabase({ name: 'ReadFile.db', createFromLocation: 1 });
     const [search, setSearch] = useState('');
@@ -30,6 +31,10 @@ const SearchIndexes = ({ navigation }) => {
     const [count, setCount] = useState(0);
     const [numOfIteration, setNumOfIteration] = useState(0);
     const [loading, setLoading] = useState(true);
+
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [suggestionsList, setSuggestionsList] = useState(null)
+    const [suggestionLoader, setSuggestionLoader] = useState(false);
     let c = 0;
     let lst = [];
     var radio_props = [
@@ -39,7 +44,7 @@ const SearchIndexes = ({ navigation }) => {
     ];
 
     const storeQuranKeyWords = async () => {
-        setIsStore(false);
+        setIsStore(true);
         await db.transaction(function (txn) {
             txn.executeSql(
                 "SELECT name FROM sqlite_master WHERE type='table' AND name='AllKeyWords'",
@@ -307,248 +312,76 @@ const SearchIndexes = ({ navigation }) => {
         });
     }
 
-    let getQuranKeywordsAndStoreSynonyms = async () => {
-        console.log('Quran Called');
-        let keywordsList = [];
-        //read keywords from Quran_KeyWords
-        var temp = [];
+    let storeWordsAndSynonyms = async () => {
+        setIsStore(true);
         await db.transaction(function (txn) {
-            txn.executeSql(
-                "SELECT * FROM Quran",
-                [],
-                function (txx, res) {
-                    console.log('length : ', res.rows.length);
-                    for (let i = 0; i < res.rows.length; ++i)
-                        temp.push(res.rows.item(i).Keywords);
-                    temp.forEach(element => {
-                        if (element != "") {
-                            let ele = "" + element.replace(/[`~!@#$%^&*()_|+\=?;.<>\{\}\[\]\\\/]/gi, '');
-                            let e = ele.split(','); //to store only one word in each index
-                            e.forEach(element => {
-                                let ele = element.charAt(0).toUpperCase() + element.substring(1)
-                                keywordsList.push(ele);
-                                // setData(data => [...data, { KeyWord: element, Book: 'Quran' }])
-                            });
-                        }
-                    });
-                    // console.log(keywordsList);
-                    let unique = [...new Set(keywordsList)];
-                    // console.log(unique);
-                    RNFS.readFileAssets('SynonymsList.txt', 'ascii').then((res) => {
-                        let newFile = res.split('\n');
-                        unique.forEach((element, i) => {
-                            let fileWord, fileSynonymsList;
-                            let matchingIndex = -1;
-                            for (let index = 0; index < newFile.length; index++) { //synonyms loop start
-                                const fileData = newFile[index];
-                                [fileWord, fileSynonymsList] = fileData.split(/\t|\s/);
-                                if (element.toLocaleLowerCase() === fileWord.toLocaleLowerCase()) {
-                                    matchingIndex = index;
-                                    console.log('word matched', fileWord, element);
+            RNFS.readFileAssets('SynonymsList.txt', 'ascii').then(async (res) => {
+                let newFile = res.split('\n');
+                for (let index = 0; index < 5; index++) { //synonyms loop start
+                    const fileData = newFile[index];
+                    let [fileWord, ...fileSynonymsList] = fileData.split(/^\t|\s/); ///^\t|\s/
+                    fileSynonymsList = fileSynonymsList.join(" ");
+                    if (fileSynonymsList != undefined) {
+                        // console.log(fileWord,' -- ' ,fileSynonymsList);
+                        txn.executeSql(
+                            `SELECT * FROM Keywords WHERE Word like ?`,
+                            [fileWord],
+                            function (tx, res) {
+                                if (res.rows.length == 0) {
+                                    tx.executeSql(
+                                        'INSERT INTO KeyWords (Word) VALUES (?)',
+                                        [fileWord],
+                                        async(tx, results) => {
+                                            if (results.rowsAffected > 0) {
+                                                console.log(`${fileWord} Stored Successfully!`);
+                                               await storeSynonyms(results.insertId, fileSynonymsList);
+                                            } else alert('Something went worng...');
+                                        }
+                                    );
+                                } else {
+                                    tx.executeSql(
+                                        'Select * from Keywords WHERE Word like ?',
+                                        [fileWord],
+                                       async (tx, results) => {
+                                            console.log('already stored', fileWord, results.rows.item(0).KID);
+                                           await storeSynonyms(results.rows.item(0).KID, fileSynonymsList)
+                                        }
+                                    );
                                 }
-                            }
-                            if (matchingIndex != -1) {
-                                const fileData = newFile[matchingIndex];
-                                let fileWord1, fileSynonymsList1;
-                                [fileWord1, fileSynonymsList1] = fileData.split(/\t/);
-                                //check that word we want to store in database is already stored or not if it will already stored  
-                                // we will do nothing else store it in database and also add synonyms of that word
-                                db.transaction(function (txn) {
-                                    txn.executeSql(
-                                        `SELECT * FROM Keywords WHERE Word like ?`,
-                                        [fileWord1],
-                                        function (tx, res) {
-                                            console.log(res.rows.length);
-                                            if (res.rows.length == 0) {
-                                                console.log('function called');
-                                                storeSynonymsAndWords(fileWord1, fileSynonymsList1);
-                                            } else {
-                                                console.log('already stored');
-                                            }
-                                        });
-                                });//end db
-                                setIsStore(false);
-                            }
-                        });
-                        console.log('completed..');
-                        getHadeesKeywordsAndStoreSynonyms();
-                    });
-                });
-
-        });
-        // getHadeesKeywordsAndStoreSynonyms();
-    }
-    let getHadeesKeywordsAndStoreSynonyms = async () => {
-        console.log('Hadess Called');
-        let keywordsList = [];
-        //read keywords from Quran_KeyWords
-        var temp = [];
-        await db.transaction(function (txn) {
-            txn.executeSql(
-                "SELECT * FROM Hadees",
-                [],
-                function (txx, res) {
-                    console.log('length : ', res.rows.length);
-                    for (let i = 0; i < res.rows.length; ++i)
-                        temp.push(res.rows.item(i).Keywords);
-                    temp.forEach(element => {
-                        if (element != "") {
-                            let ele = "" + element.replace(/[`~!@#$%^&*()_|+\=?;.<>\{\}\[\]\\\/]/gi, '');
-                            let e = ele.split(','); //to store only one word in each index
-                            e.forEach(element => {
-                                let ele = element.charAt(0).toUpperCase() + element.substring(1)
-                                keywordsList.push(ele);
-                                // setData(data => [...data, { KeyWord: element, Book: 'Quran' }])
                             });
-                        }
-                    });
-                    // console.log(keywordsList);
-                    let unique = [...new Set(keywordsList)];
-                    // console.log(unique);
-                    RNFS.readFileAssets('SynonymsList.txt', 'ascii').then((res) => {
-                        let newFile = res.split('\n');
-                        unique.forEach((element, i) => {
-                            let fileWord, fileSynonymsList;
-                            let matchingIndex = -1;
-                            for (let index = 0; index < newFile.length; index++) { //synonyms loop start
-                                const fileData = newFile[index];
-                                [fileWord, fileSynonymsList] = fileData.split(/\t|\s/);
-                                if (element.toLocaleLowerCase() === fileWord.toLocaleLowerCase()) {
-                                    matchingIndex = index;
-                                    console.log('word matched', fileWord, element);
-                                }
-                            }
-                            if (matchingIndex != -1) {
-                                const fileData = newFile[matchingIndex];
-                                let fileWord1, fileSynonymsList1;
-                                [fileWord1, fileSynonymsList1] = fileData.split(/\t/);
-                                //check that word we want to store in database is already stored or not if it will already stored  
-                                // we will do nothing else store it in database and also add synonyms of that word
-                                db.transaction(function (txn) {
-                                    txn.executeSql(
-                                        `SELECT * FROM Keywords WHERE Word like ?`,
-                                        [fileWord1],
-                                        function (tx, res) {
-                                            console.log(res.rows.length);
-                                            if (res.rows.length == 0) {
-                                                console.log('function called');
-                                                storeSynonymsAndWords(fileWord1, fileSynonymsList1);
-                                            } else {
-                                                console.log('already stored');
-                                            }
-                                        });
-                                });//end db
-                                setIsStore(false);
-                            }
-                        });
-                         getBibleKeywordsAndStoreSynonyms();
-                    });
-                });
-
-        });
-    }
-    let getBibleKeywordsAndStoreSynonyms = async () => {
-        console.log('Bible Called');
-        let keywordsList = [];
-        //read keywords from Quran_KeyWords
-        var temp = [];
-        await db.transaction(function (txn) {
-            txn.executeSql(
-                "SELECT * FROM Bible1",
-                [],
-                function (txx, res) {
-                    console.log('length : ', res.rows.length);
-                    for (let i = 0; i < res.rows.length; ++i)
-                        temp.push(res.rows.item(i).Keywords);
-                    temp.forEach(element => {
-                        if (element != "") {
-                            let ele = "" + element.replace(/[`~!@#$%^&*()_|+\=?;.<>\{\}\[\]\\\/]/gi, '');
-                            let e = ele.split(','); //to store only one word in each index
-                            e.forEach(element => {
-                                let ele = element.charAt(0).toUpperCase() + element.substring(1)
-                                keywordsList.push(ele);
-                                // setData(data => [...data, { KeyWord: element, Book: 'Quran' }])
-                            });
-                        }
-                    });
-                    // console.log(keywordsList);
-                    let unique = [...new Set(keywordsList)];
-                    // console.log(unique);
-                    RNFS.readFileAssets('SynonymsList.txt', 'ascii').then((res) => {
-                        let newFile = res.split('\n');
-                        unique.forEach((element, i) => {
-                            let fileWord, fileSynonymsList;
-                            let matchingIndex = -1;
-                            for (let index = 0; index < newFile.length; index++) { //synonyms loop start
-                                const fileData = newFile[index];
-                                [fileWord, fileSynonymsList] = fileData.split(/\t|\s/);
-                                if (element.toLocaleLowerCase() === fileWord.toLocaleLowerCase()) {
-                                    matchingIndex = index;
-                                    console.log('word matched', fileWord, element);
-                                }
-                            }
-                            if (matchingIndex != -1) {
-                                const fileData = newFile[matchingIndex];
-                                let fileWord1, fileSynonymsList1;
-                                [fileWord1, fileSynonymsList1] = fileData.split(/\t/);
-                                //check that word we want to store in database is already stored or not if it will already stored  
-                                // we will do nothing else store it in database and also add synonyms of that word
-                                db.transaction(function (txn) {
-                                    txn.executeSql(
-                                        `SELECT * FROM Keywords WHERE Word like ?`,
-                                        [fileWord1],
-                                        function (tx, res) {
-                                            console.log(res.rows.length);
-                                            if (res.rows.length == 0) {
-                                                console.log('function called');
-                                                storeSynonymsAndWords(fileWord1, fileSynonymsList1);
-                                            } else {
-                                                console.log('already stored');
-                                            }
-                                        });
-                                });//end db
-                                setIsStore(false);
-                            }
-                        });
-                    });
-                });
-
-        });
-    }
-    const storeSynonymsAndWords = (word, synonymsList) => {
-        // console.log(word, synonymsList);
-        let words = synonymsList.split(',');
-        db.transaction(function (tx) { //store word in KeyWords table
-            tx.executeSql(
-                'INSERT INTO KeyWords (Word) VALUES (?)',
-                [word],
-                (tx, results) => {
-                    console.log('Results', results.rowsAffected);
-                    if (results.rowsAffected > 0) {
-                        console.log(`${word} Stored Successfully!`);
-                        let wordId = results.insertId;
-                        //if word stored successfully then we will store synonms of this word in Synonyms table
-                        words.forEach((element, index) => {
-                            console.log(index, word, element);
-                            db.transaction(function (tx) { //store synonyms
-                                tx.executeSql(
-                                    'INSERT INTO Synonyms (Synonym,KID) VALUES (?,?)',
-                                    [element, wordId],
-                                    (tx, results) => {
-                                        console.log('Results', results.rowsAffected);
-                                        if (results.rowsAffected > 0) {
-                                            console.log(`Word ${word} ${results.insertId} ${element} Stored Successfully!`);
-                                        } else alert('Something went worng...');
-                                    }
-                                );
-                            });//store synonyms end...
-                        });//loop end 
-                    } else alert('Something went worng...');
+                    }
                 }
-            );
-        });//store word in KeyWords table end...
-
+            });
+        });//end db
+        setIsStore(false);
     }
+    const storeSynonyms = async (id, synonymsList) => {
+        let words = synonymsList.split(',');
+        //if word stored successfully then we will store synonyms of this word in Synonyms table
+        words.forEach(async(element, index) => {
+          await  db.transaction(function (tx) { //store synonyms
+                tx.executeSql(
+                    'SELECT * FROM Synonyms WHERE KID=? AND Synonym like ?',
+                    [id, element],
+                    (tx, results) => {
+                        if (results.rows.length == 0) {
+                            tx.executeSql(
+                                'INSERT INTO Synonyms (Synonym,KID) VALUES (?,?)',
+                                [element, id],
+                                (tx, results) => {
+                                    if (results.rowsAffected > 0) {
+                                        console.log(`${id} Synonym ${element} Stored Successfully!`);
+                                    } else alert('Something went worng...');
+                                }
+                            );
+                        }
+
+                    }
+                );
+            });//store synonyms end...
+        });//loop end 
+    }
+
     const getKeyWords = async () => {
         db.transaction((tx) => {
             tx.executeSql(
@@ -581,16 +414,15 @@ const SearchIndexes = ({ navigation }) => {
 
     useEffect(async () => {
         setIsStore(false);
+        console.log('......................................:::::::::::::::::::;')
         // await storeQuranKeyWords();
         // await storeBibleKeyWords();
-        // await getQuranKeywordsAndStoreSynonyms();
-        // await getHadeesKeywordsAndStoreSynonyms();
-        // await getBibleKeywordsAndStoreSynonyms();
-        getKeyWords();
+        await storeWordsAndSynonyms();
+        // getKeyWords();
         // getSynonyms();
     }, [])
     useEffect(() => {
-        console.log('.....', dataCopy.length);
+        // console.log('.....', dataCopy.length);
         if (gettingDataFor == 'Quran')
             getMoreQuranData();
         else if (gettingDataFor == 'Hadees')
@@ -601,7 +433,6 @@ const SearchIndexes = ({ navigation }) => {
     }, [dataCopy]);
     // ................................GET MORE DATA ON FLATLIST END REACHED......................................
     const getMoreQuranData = () => {
-        console.log('called...');
         const Record_Per_Fetch = 10;
         setLoading(true);
         console.log(`Data Length ${data.length}  ,  DataCopy Length  ${dataCopy.length}  ,  NumOfIteration ${numOfIteration}`);
@@ -640,7 +471,7 @@ const SearchIndexes = ({ navigation }) => {
             }
         }
         else {
-            console.log('done');
+            // console.log('done');
             setLoading(false);
         }
     }
@@ -1027,13 +858,12 @@ const SearchIndexes = ({ navigation }) => {
         });
     }
     const searchResult = (text, tableName) => {
-        setIsFetched(true);
+        setIsFetched(true); setSearch('');
         setGettingDataFor(tableName);
         console.log(`searchResult:${text} TableName : ${tableName}`);
-        setData([]);
+        setData([]); setDataCopy([]);
         // setSearch(text);
         if (text) {
-            console.log(search);
             let rowsLength = 0; var temp = [];
             if (tableName == "Quran") {
                 getQuranData(text, tableName);
@@ -1043,9 +873,8 @@ const SearchIndexes = ({ navigation }) => {
                 getBibleData(text, tableName);
             }
         } else {
-            setData([]);
-            alert('Please enter Word to search..');
             setIsFetched(false);
+            alert('Please enter Word to search..');
         }
 
     }
@@ -1072,12 +901,42 @@ const SearchIndexes = ({ navigation }) => {
             </View>
         );
     };
+
+    const getSuggestions = useCallback(async (q) => {
+        setSuggestionLoader(true); setSuggestionsList([]);
+        setSearch(q);
+        if (q.length == 0) {
+            setSuggestionsList(null); setSuggestionLoader(false);
+            return
+        }
+
+        await db.transaction((tx) => {
+            tx.executeSql(
+                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '%${q}%'`,
+                [],
+                (tx, results) => {
+                    var temp = [];
+                    let count = 0;
+                    for (let i = 0; i < results.rows.length; ++i) {
+                        let obj = {
+                            id: results.rows.item(i).SID,
+                            title: results.rows.item(i).Synonym
+                        }
+                        if (obj.title.length > 0)
+                            temp.push(obj);
+                    }
+                    setSuggestionsList(temp);
+                }
+            );
+        });
+        setSuggestionLoader(false);
+    }, [])
     return (
         <View style={styles.container}>
             {
                 isStore == true ? (
                     <View style={[styles.container, styles.horizontal]}>
-                        <ActivityIndicator size="large" color="red" />
+                        <ActivityIndicator size="large" color="green" />
                     </View>
                 ) : (
                     <View style={{ flex: 1 }}>
@@ -1096,9 +955,80 @@ const SearchIndexes = ({ navigation }) => {
 
                         <KeepAwake />
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <TextInput style={styles.input}
+
+                            {/* <TextInput style={styles.input}
                                 onChangeText={(text) => setSearch(text)}
-                                placeholder={'search here...'} placeholderTextColor={'gray'} />
+                                placeholder={'search here...'} placeholderTextColor={'gray'} /> */}
+
+                            {
+                                isFetched == true ? (
+                                    <TextInput style={styles.input}
+                                        onChangeText={(text) => setSearch(text)}
+                                        placeholder={'search here...'} placeholderTextColor={'gray'} />
+                                ) : (
+
+                                    <AutocompleteDropdown
+                                        clearOnFocus={false}
+                                        closeOnBlur={false}
+
+                                        closeOnSubmit={true}
+
+                                        // initialValue={{ id: '2' }} // or just '2'
+                                        onSelectItem={(item) => { item && setSearch(item.title) }}
+                                        onChangeText={getSuggestions}
+                                        dataSet={suggestionsList}
+                                        debounce={400}
+                                        suggestionsListMaxHeight={Dimensions.get("window").height * 0.4}
+                                        // // onClear={onClearPress}
+                                        //  onSubmit={(e) => onSubmitSearch(e.nativeEvent.text)}
+                                        onSubmit={(e) => searchResult(search, tableName)}
+                                        // // onOpenSuggestionsList={onOpenSuggestionsList}
+                                        loading={suggestionLoader}
+                                        // useFilter={false} // prevent rerender twice
+                                        textInputProps={{
+                                            placeholder: "search here...",
+                                            autoCorrect: false,
+                                            autoCapitalize: "none",
+                                            style: {
+                                                borderRadius: 10,
+                                                backgroundColor: "#000",
+                                                color: "#fff",
+                                                paddingLeft: 18,
+                                            }
+                                        }}
+                                        rightButtonsContainerStyle={{
+                                            borderRadius: 30,
+                                            right: 8,
+                                            height: 30,
+                                            width: 30,
+                                            top: 7,
+                                            alignSelfs: "center",
+                                            backgroundColor: "#000"
+                                        }}
+                                        inputContainerStyle={{
+                                            backgroundColor: "transparent"
+                                        }}
+                                        suggestionsListContainerStyle={{
+                                            backgroundColor: "#28D6C0",
+                                        }}
+                                        containerStyle={{ flex: 1.5 }}
+                                        renderItem={(item, text) => (
+                                            <Text style={{ color: "#fff", padding: 15 }}>{item.title}</Text>
+                                        )}
+                                        ChevronIconComponent={
+                                            <Feather name="x-circle" size={18} color="#fff" />
+                                        }
+                                        ClearIconComponent={
+                                            <Feather name="chevron-down" size={20} color="#fff" />
+                                        }
+                                        inputHeight={45}
+                                        // showChevron={true}
+                                        showClear={false}
+                                    />
+                                )
+                            }
+
+
                             <TouchableOpacity onPress={() => searchResult(search, tableName)}
                                 style={{ height: 40, backgroundColor: '#015c92', flex: .5, borderRadius: 10, justifyContent: 'center' }}>
                                 <Text style={{ fontSize: 20, color: '#fff', textAlign: 'center' }}>Search</Text>
