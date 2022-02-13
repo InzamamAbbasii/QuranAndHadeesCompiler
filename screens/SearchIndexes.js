@@ -990,7 +990,7 @@ const SearchIndexes = ({ navigation }) => {
                                             autoCorrect: false,
                                             autoCapitalize: "none",
                                             style: {
-                                                borderRadius: 10,
+                                                borderRadius: 0,
                                                 backgroundColor: "#000",
                                                 color: "#fff",
                                                 paddingLeft: 18,
@@ -1030,7 +1030,7 @@ const SearchIndexes = ({ navigation }) => {
 
 
                             <TouchableOpacity onPress={() => searchResult(search, tableName)}
-                                style={{ height: 40, backgroundColor: '#015c92', flex: .5, borderRadius: 10, justifyContent: 'center' }}>
+                                style={{ height: 45, backgroundColor: '#28D', flex: .5, justifyContent: 'center' }}>
                                 <Text style={{ fontSize: 20, color: '#fff', textAlign: 'center' }}>Search</Text>
                             </TouchableOpacity>
                         </View>

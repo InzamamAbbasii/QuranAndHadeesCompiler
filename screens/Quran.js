@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useLayoutEffect } from "react";
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator,LogBox } from 'react-native';
 var RNFS = require('react-native-fs');
 const sw = require('remove-stopwords');
@@ -8,6 +8,11 @@ import * as Progress from 'react-native-progress';
 import { log } from "react-native-reanimated";
 const Quran = ({ navigation, route }) => {
     LogBox.ignoreLogs(['new NativeEventEmitter']);
+    useLayoutEffect(() => {
+      navigation.setOptions({
+          title:'Surah '+route.params.SurahId.toString()
+      })
+    }, [])
     const [data, setData] = useState([]);
     const [isFetched, setIsFetched] = useState(true);
     const [percentage, setPercentage] = useState(0);

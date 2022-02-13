@@ -20,6 +20,7 @@
     "react": "17.0.2",
     "react-native": "0.65.1",
     "react-native-animated-progress": "^1.0.2",
+    "react-native-autocomplete-dropdown": "^1.1.6",
     "react-native-circular-progress-indicator": "^2.0.5",
     "react-native-document-picker": "^7.1.1",
     "react-native-file-viewer": "^2.1.4",

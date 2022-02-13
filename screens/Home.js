@@ -414,7 +414,9 @@ const Home = ({ navigation }) => {
   }
   return (
     <ScrollView style={styles.container}>
-      <View style={{backgroundColor:'green',paddingVertical:30,borderBottomLeftRadius:40,borderBottomRightRadius:40}}>
+      <View style={{backgroundColor:'#185425',paddingVertical:30,
+      borderWidth:5,borderTopWidth:0,borderColor:'gray',
+      borderBottomLeftRadius:40,borderBottomRightRadius:40}}>
         <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 40, textAlign: 'center', marginBottom: 20 }}>
           Quran,Hadees And Bible Compiler
         </Text>
@@ -438,13 +440,13 @@ const Home = ({ navigation }) => {
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadQuran()}>
           <Image
-            source={require('../assets/images/Quran2.png')}
+            source={require('../assets/images/Quran11.png')}
             style={styles.imageStyle}
           />
         </TouchableOpacity>
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadHadees()}>
           <Image
-            source={require('../assets/images/Hadees1.png')}
+            source={require('../assets/images/Hadith11.png')}
             style={styles.imageStyle}
           />
         </TouchableOpacity>
@@ -453,7 +455,7 @@ const Home = ({ navigation }) => {
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadBible()}>
           <Image
-            source={require('../assets/images/Bible.png')}
+            source={require('../assets/images/Bible11.png')}
             style={styles.imageStyle}
           />
         </TouchableOpacity>
@@ -465,7 +467,7 @@ const Home = ({ navigation }) => {
         </TouchableOpacity> */}
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('Search')}>
           <Image
-            source={require('../assets/images/Search.png')}
+            source={require('../assets/images/Search11.png')}
             style={styles.imageStyle}
           />
         </TouchableOpacity>
@@ -475,18 +477,16 @@ const Home = ({ navigation }) => {
 
         <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('SearchIndexes')}>
           <Image
-            source={require('../assets/images/Indexes.png')}
+            source={require('../assets/images/Indexes11.png')}
             style={styles.imageStyle}
           />
         </TouchableOpacity>
 
-        <TouchableOpacity style={{
-          backgroundColor: 'green', width: Dimensions.get('window').width / 2 - 30, height: Dimensions.get('window').width / 2 - 30,
-          borderRadius: Dimensions.get('window').width / 2 - 30, justifyContent: 'center', alignItems: 'center', marginLeft: 15
-        }}
-          onPress={() => navigation.navigate('Synonyms')}>
-          <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}> ADD Synonyms</Text>
-
+        <TouchableOpacity style={{ flex: 1, margin: 5 }}   onPress={() => navigation.navigate('Synonyms')}>
+          <Image
+            source={require('../assets/images/Synonyms11.png')}
+            style={styles.imageStyle}
+          />
         </TouchableOpacity>
 
       </View>
