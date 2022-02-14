@@ -1,5 +1,5 @@
-import React, { useState, useEffect,useLayoutEffect } from "react";
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator,LogBox } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, LogBox } from 'react-native';
 var RNFS = require('react-native-fs');
 const sw = require('remove-stopwords');
 import CircularProgress from 'react-native-circular-progress-indicator';
@@ -9,9 +9,9 @@ import { log } from "react-native-reanimated";
 const Quran = ({ navigation, route }) => {
     LogBox.ignoreLogs(['new NativeEventEmitter']);
     useLayoutEffect(() => {
-      navigation.setOptions({
-          title:'Surah '+route.params.SurahId.toString()
-      })
+        navigation.setOptions({
+            title: 'Surah ' + route.params.SurahId.toString()
+        })
     }, [])
     const [data, setData] = useState([]);
     const [isFetched, setIsFetched] = useState(true);
@@ -91,7 +91,7 @@ const Quran = ({ navigation, route }) => {
                                             if (results.rowsAffected > 0) {
                                                 let per = ((results.insertId / words.length) * 100).toFixed(0);
                                                 setPercentage(per);
-                                                setTotalData(words.length);setSavedData(results.insertId);
+                                                setTotalData(words.length); setSavedData(results.insertId);
                                                 console.log(`${per}% Data Stored Successfully! , Inserted ID : ${results.insertId}`);
                                             } else alert('Something went worng...');
                                         }
@@ -163,7 +163,7 @@ const Quran = ({ navigation, route }) => {
                     </View>
                 ) : (
                     <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-                        <Text style={{fontSize:20,fontWeight:'bold'}}>{savedData}/{totalData}</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{savedData}/{totalData}</Text>
                         <CircularProgress
                             value={percentage}
                             radius={120}
@@ -185,9 +185,10 @@ const Quran = ({ navigation, route }) => {
                     windowSize={10}
                     renderItem={(item, index) =>
                         <View
-                            style={{ flex: 1, width: '97%', alignSelf: 'center', borderRadius: 8, elevation: 5, marginBottom: 10, padding: 10, backgroundColor: '#58c7be' }}>
+                            style={{ flex: 1, width: '97%', alignSelf: 'center ', borderRadius: 8, elevation: 5, marginBottom: 10, padding: 10, backgroundColor: '#58c7be' }}>
                             <Text style={{ color: 'black', fontWeight: 'bold', backgroundColor: '#58c7be', paddingVertical: 10, fontSize: 20 }} >Surah No {item.item.SurahId} : Ayat No {item.item.AyatId}</Text>
-                            <Text style={{ fontSize: 20,color:'#222' }}>{item.item.AyatText}</Text>
+
+                                <Text style={{ fontSize: 20, color: '#222',flex:1 }}>{item.item.AyatText}</Text>
                         </View>
                     }
                 />

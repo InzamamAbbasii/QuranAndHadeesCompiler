@@ -9,7 +9,7 @@ import KeepAwake from "react-native-keep-awake";
 var RNFS = require('react-native-fs');
 const sw = require('remove-stopwords');
 import RadioForm from 'react-native-simple-radio-button';
-import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown'
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 const SearchIndexes = ({ navigation }) => {
     var db = openDatabase({ name: 'ReadFile.db', createFromLocation: 1 });
     const [search, setSearch] = useState('');
@@ -317,38 +317,43 @@ const SearchIndexes = ({ navigation }) => {
         await db.transaction(function (txn) {
             RNFS.readFileAssets('SynonymsList.txt', 'ascii').then(async (res) => {
                 let newFile = res.split('\n');
-                for (let index = 0; index < 5; index++) { //synonyms loop start
+                for (let index = 0; index < newFile.length; index++) { //synonyms loop start
                     const fileData = newFile[index];
-                    let [fileWord, ...fileSynonymsList] = fileData.split(/^\t|\s/); ///^\t|\s/
-                    fileSynonymsList = fileSynonymsList.join(" ");
-                    if (fileSynonymsList != undefined) {
-                        // console.log(fileWord,' -- ' ,fileSynonymsList);
-                        txn.executeSql(
-                            `SELECT * FROM Keywords WHERE Word like ?`,
-                            [fileWord],
-                            function (tx, res) {
-                                if (res.rows.length == 0) {
-                                    tx.executeSql(
-                                        'INSERT INTO KeyWords (Word) VALUES (?)',
-                                        [fileWord],
-                                        async(tx, results) => {
-                                            if (results.rowsAffected > 0) {
-                                                console.log(`${fileWord} Stored Successfully!`);
-                                               await storeSynonyms(results.insertId, fileSynonymsList);
-                                            } else alert('Something went worng...');
-                                        }
-                                    );
-                                } else {
-                                    tx.executeSql(
-                                        'Select * from Keywords WHERE Word like ?',
-                                        [fileWord],
-                                       async (tx, results) => {
-                                            console.log('already stored', fileWord, results.rows.item(0).KID);
-                                           await storeSynonyms(results.rows.item(0).KID, fileSynonymsList)
-                                        }
-                                    );
-                                }
-                            });
+                    if (fileData.length > 0) {
+                        let [fileWord, ...fileSynonymsList] = fileData.split(/^\t|\s/); ///^\t|\s/
+                        fileSynonymsList = Array(fileSynonymsList.join(" "));
+                        fileSynonymsList = fileSynonymsList.toString().split(',');
+                        fileSynonymsList.unshift(fileWord);
+                        fileSynonymsList = [...new Set(fileSynonymsList)].join(','); //remove duplicate values;
+                        if (fileSynonymsList != undefined) {
+                            // console.log(fileWord,' -- ' ,fileSynonymsList);
+                            txn.executeSql(
+                                `SELECT * FROM Keywords WHERE Word like ?`,
+                                [fileWord],
+                                function (tx, res) {
+                                    if (res.rows.length == 0) {
+                                        tx.executeSql(
+                                            'INSERT INTO KeyWords (Word) VALUES (?)',
+                                            [fileWord],
+                                            async (tx, results) => {
+                                                if (results.rowsAffected > 0) {
+                                                    console.log(`${fileWord} Stored Successfully!`);
+                                                    await storeSynonyms(results.insertId, fileSynonymsList);
+                                                } else alert('Something went worng...');
+                                            }
+                                        );
+                                    } else {
+                                        tx.executeSql(
+                                            'Select * from Keywords WHERE Word like ?',
+                                            [fileWord],
+                                            async (tx, results) => {
+                                                console.log('already stored', fileWord, results.rows.item(0).KID);
+                                                await storeSynonyms(results.rows.item(0).KID, fileSynonymsList)
+                                            }
+                                        );
+                                    }
+                                });
+                        }
                     }
                 }
             });
@@ -358,8 +363,8 @@ const SearchIndexes = ({ navigation }) => {
     const storeSynonyms = async (id, synonymsList) => {
         let words = synonymsList.split(',');
         //if word stored successfully then we will store synonyms of this word in Synonyms table
-        words.forEach(async(element, index) => {
-          await  db.transaction(function (tx) { //store synonyms
+        words.forEach(async (element, index) => {
+            await db.transaction(function (tx) { //store synonyms
                 tx.executeSql(
                     'SELECT * FROM Synonyms WHERE KID=? AND Synonym like ?',
                     [id, element],
@@ -577,88 +582,90 @@ const SearchIndexes = ({ navigation }) => {
         setSearchArray([]); setDataCopy([]); setNumOfIteration(0);
         await db.transaction((tx) => {
             tx.executeSql(
-                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '${text}'`,
+                // `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '${text}'`,
+                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Synonyms.KID In (SELECT KID from Synonyms where Synonym like '${text}')`,
                 [],
                 (tx, results) => {
                     var temp = [];
                     console.log('sys ', results.rows.length);
                     if (results.rows.length > 0) {
-                        for (let i = 0; i < results.rows.length; ++i)
-                            temp.push(results.rows.item(i).Synonym);
-                        var arr = [];
-                        temp.forEach((element, index) => {
-                            // `SELECT * FROM ${tableName} Where AyatText like '%${element}%'`,
-                            tx.executeSql(
-                                `SELECT * FROM ${tableName} WHERE AyatText like '${element} %' or AyatText like'% ${element}' or AyatText like'% ${element} %' or AyatText like '${element}' or AyatText REGEXP ' ${element}(,|;|.") ' or AyatText REGEXP ' (,|;|.")${element} '`,
-                                [],
-                                (tx, results) => {
-                                    let rowsLength = results.rows.length;
-                                    setSearchArray(data => [...data, { Syn: element }]);
-                                    lst.push(element);
-                                    let searchWord = element;
-                                    // console.log(element, rowsLength);
-                                    for (let i = 0; i < results.rows.length; ++i) {
-                                        let found = arr.some(s => s.Id == results.rows.item(i).Id);
-                                        if (found == false) {
-                                            arr.push(results.rows.item(i));
-                                        }
+                    for (let i = 0; i < results.rows.length; ++i)
+                        temp.push(results.rows.item(i).Synonym);
+                    // console.log(temp);
+                    var arr = [];
+                    temp.forEach((element, index) => {
+                        // `SELECT * FROM ${tableName} Where AyatText like '%${element}%'`,
+                        tx.executeSql(
+                            `SELECT * FROM ${tableName} WHERE AyatText like '${element} %' or AyatText like'% ${element}' or AyatText like'% ${element} %' or AyatText like '${element}' or AyatText REGEXP ' ${element}(,|;|.") ' or AyatText REGEXP ' (,|;|.")${element} '`,
+                            [],
+                            (tx, results) => {
+                                let rowsLength = results.rows.length;
+                                setSearchArray(data => [...data, { Syn: element }]);
+                                lst.push(element);
+                                let searchWord = element;
+                                // console.log(element, rowsLength);
+                                for (let i = 0; i < results.rows.length; ++i) {
+                                    let found = arr.some(s => s.Id == results.rows.item(i).Id);
+                                    if (found == false) {
+                                        arr.push(results.rows.item(i));
                                     }
-                                    if (arr.length > 10) {
-                                        setDataCopy(arr);
-                                    } else if (arr.length < 10 && index == temp.length - 1) {
-                                        setDataCopy(arr);
-                                    }
-                                    if (arr.length == 0 && index == temp.length - 1) {
-                                        alert('No record found.')
-                                    }
-                                    // if (rowsLength > 0) {
-                                    //     if (rowsLength > 2) {
-                                    //         for (let index = 0; index < 2; index++) {
-                                    //             const element = arr[index];
-                                    //             let found = data.some(s => s.Id == element.Id);
-                                    //             if (found == false) {
-                                    //                 setData(data => [...data,
-                                    //                 {
-                                    //                     Id: element.Id,
-                                    //                     SurahId: element.SurahId,
-                                    //                     AyatId: element.AyatId,
-                                    //                     AyatText: element.AyatText,
-                                    //                     SearchWord: text,
-                                    //                 }
-                                    //                 ]);
-                                    //             }
-                                    //         }
-                                    //     }
-                                    // }
-                                    //     // else {
-                                    //     // arr.forEach(element => {
-                                    //     //     let found = data.some(s => s.Id == element.Id);
-                                    //     //     if (found == false) {
-                                    //     //         setData(data => [...data,
-                                    //     //         {
-                                    //     //             Id: element.Id,
-                                    //     //             SurahId: element.SurahId,
-                                    //     //             AyatId: element.AyatId,
-                                    //     //             AyatText: element.AyatText,
-                                    //     //             SearchWord: text,
-                                    //     //         }
-                                    //     //         ]);
-                                    //     //         setDataCopy(data => [...data,
-                                    //     //             {
-                                    //     //                 Id: element.Id,
-                                    //     //                 SurahId: element.SurahId,
-                                    //     //                 AyatId: element.AyatId,
-                                    //     //                 AyatText: element.AyatText,
-                                    //     //                 SearchWord: text,
-                                    //     //             }
-                                    //     //             ]);
-                                    //     //     }
-                                    //     // });
-                                    //     // }
-                                    setIsFetched(false);
-                                    // }
-                                });
-                        });
+                                }
+                                if (arr.length > 10) {
+                                    setDataCopy(arr);
+                                } else if (arr.length < 10 && index == temp.length - 1) {
+                                    setDataCopy(arr);
+                                }
+                                if (arr.length == 0 && index == temp.length - 1) {
+                                    alert('No record found.')
+                                }
+                                // if (rowsLength > 0) {
+                                //     if (rowsLength > 2) {
+                                //         for (let index = 0; index < 2; index++) {
+                                //             const element = arr[index];
+                                //             let found = data.some(s => s.Id == element.Id);
+                                //             if (found == false) {
+                                //                 setData(data => [...data,
+                                //                 {
+                                //                     Id: element.Id,
+                                //                     SurahId: element.SurahId,
+                                //                     AyatId: element.AyatId,
+                                //                     AyatText: element.AyatText,
+                                //                     SearchWord: text,
+                                //                 }
+                                //                 ]);
+                                //             }
+                                //         }
+                                //     }
+                                // }
+                                //     // else {
+                                //     // arr.forEach(element => {
+                                //     //     let found = data.some(s => s.Id == element.Id);
+                                //     //     if (found == false) {
+                                //     //         setData(data => [...data,
+                                //     //         {
+                                //     //             Id: element.Id,
+                                //     //             SurahId: element.SurahId,
+                                //     //             AyatId: element.AyatId,
+                                //     //             AyatText: element.AyatText,
+                                //     //             SearchWord: text,
+                                //     //         }
+                                //     //         ]);
+                                //     //         setDataCopy(data => [...data,
+                                //     //             {
+                                //     //                 Id: element.Id,
+                                //     //                 SurahId: element.SurahId,
+                                //     //                 AyatId: element.AyatId,
+                                //     //                 AyatText: element.AyatText,
+                                //     //                 SearchWord: text,
+                                //     //             }
+                                //     //             ]);
+                                //     //     }
+                                //     // });
+                                //     // }
+                                setIsFetched(false);
+                                // }
+                            });
+                    });
                     } else {
                         console.log('else executed');
                         setSearchArray(data => [...data, { Syn: text }]);
@@ -710,10 +717,8 @@ const SearchIndexes = ({ navigation }) => {
                                     // }
                                 });
                         });
-
                     }//else
                 });
-
         });
 
     }
@@ -721,7 +726,8 @@ const SearchIndexes = ({ navigation }) => {
         setSearchArray([]); setDataCopy([]); setNumOfIteration(0);
         await db.transaction((tx) => {
             tx.executeSql(
-                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '${text}'`,
+                // `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '${text}'`,
+                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Synonyms.KID In (SELECT KID from Synonyms where Synonym like '${text}' )`,
                 [],
                 (tx, results) => {
                     var temp = [];
@@ -793,7 +799,8 @@ const SearchIndexes = ({ navigation }) => {
         setSearchArray([]); setDataCopy([]); setNumOfIteration(0);
         db.transaction((tx) => {
             tx.executeSql(
-                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '${text}'`,
+                // `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '${text}'`,
+                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Synonyms.KID In (SELECT KID from Synonyms where Synonym like '${text}')`,
                 [],
                 (tx, results) => {
                     var temp = [];
@@ -956,11 +963,11 @@ const SearchIndexes = ({ navigation }) => {
                         <KeepAwake />
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                            {/* <TextInput style={styles.input}
+                            <TextInput style={styles.input}
                                 onChangeText={(text) => setSearch(text)}
-                                placeholder={'search here...'} placeholderTextColor={'gray'} /> */}
+                                placeholder={'search here...'} placeholderTextColor={'gray'} />
 
-                            {
+                            {/* {
                                 isFetched == true ? (
                                     <TextInput style={styles.input}
                                         onChangeText={(text) => setSearch(text)}
@@ -1026,7 +1033,7 @@ const SearchIndexes = ({ navigation }) => {
                                         showClear={false}
                                     />
                                 )
-                            }
+                            } */}
 
 
                             <TouchableOpacity onPress={() => searchResult(search, tableName)}

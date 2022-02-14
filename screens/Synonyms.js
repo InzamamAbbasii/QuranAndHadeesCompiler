@@ -1,6 +1,8 @@
-import React, { useState,useEffect } from "react";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Dimensions, FlatList,LogBox } from "react-native";
 import { openDatabase } from 'react-native-sqlite-storage';
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
+import Feather from 'react-native-vector-icons/Feather';
 
 const Synonyms = () => {
     var db = openDatabase({ name: 'ReadFile.db', createFromLocation: 1 });
@@ -10,7 +12,19 @@ const Synonyms = () => {
     const [swapingWord, setSwapingWord] = useState('');
     const [synonym, setSynonym] = useState('');
 
+    const [suggestionsList, setSuggestionsList] = useState(null)
+    const [synonymsSuggestionsList, setSynonymsSuggestionsList] = useState(null)
+    const [suggestionLoader, setSuggestionLoader] = useState(false);
+
+    const [showWordSuggestions, setShowWordSuggestions] = useState(false);
+    const [showWordSuggestions1, setShowWordSuggestions1] = useState(false);
+    const [showSynonymSuggestions, setShowSynonymSuggestions] = useState(false);
+    useEffect(() => {
+        LogBox.ignoreLogs(["VirtualizedLists should never be nested"])
+      }, [])
     const addSynonym = async () => {
+        console.log(word, ',', synonym);
+        setShowWordSuggestions(false);setShowSynonymSuggestions(false);
         if (word.length == 0) {
             alert('Please Enter Word!')
         } else if (synonym.length == 0) {
@@ -46,11 +60,12 @@ const Synonyms = () => {
         }
     }
     const storeSynonyms = (id, synonym) => {
+        setShowWordSuggestions1(false);
         //if word stored successfully then we will store synonyms of this word in Synonyms table
         db.transaction(function (tx) { //store synonyms
             tx.executeSql(
                 'SELECT * FROM Synonyms WHERE KID=? AND Synonym like ?',
-                [id,synonym],
+                [id, synonym],
                 (tx, results) => {
                     if (results.rows.length == 0) {
                         tx.executeSql(
@@ -75,11 +90,11 @@ const Synonyms = () => {
             await db.transaction(function (txn) {
                 txn.executeSql(
                     'UPDATE Keywords SET Word=? WHERE Word=?',
-                    [swapingWord,word1],
+                    [swapingWord, word1],
                     (tx, results) => {
                         if (results.rowsAffected > 0) {
-                            setWord1('');setSwapingWord('');
-                           alert(`Word ${word1} Swaped With ${swapingWord} Successffully!`)
+                            setWord1(''); setSwapingWord('');
+                            alert(`Word ${word1} Swaped With ${swapingWord} Successffully!`)
                         } else alert('Word you want to swap is not exist in record.');
                     }
                 );
@@ -87,10 +102,10 @@ const Synonyms = () => {
 
         }
     }
-    useEffect(()=>{
-     getKeyWords();
-      getSynonyms();
-    },[])
+    useEffect(() => {
+         getKeyWords();
+        //   getSynonyms();
+    }, [])
     const getKeyWords = async () => {
         db.transaction((tx) => {
             tx.executeSql(
@@ -120,6 +135,69 @@ const Synonyms = () => {
             );
         });
     }
+    const getWordSuggestions = async (q) => {
+        // setShowWordSuggestions(true);
+        setSuggestionLoader(true); setSuggestionsList([]);
+        if (q.length == 0) {
+            setSuggestionsList(null); setSuggestionLoader(false);
+            return
+        }
+        await db.transaction((tx) => {
+            tx.executeSql(
+                // `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '%${q}%'`,
+                `select * from KeyWords Where Word like'${q}%'`,
+                [],
+                (tx, results) => {
+                    var temp = [];
+                    console.log(results.rows.length);
+                    for (let i = 0; i < results.rows.length; ++i) {
+                        let obj = {
+                            id: results.rows.item(i).KID,
+                            title: results.rows.item(i).Word
+                        }
+                        if (obj.title.length > 0)
+                            temp.push(obj);
+                    }
+                    setSuggestionsList(temp);
+                }
+            );
+        });
+        setSuggestionLoader(false);
+    }
+
+    const getSynonymsSuggestions = async (q) => {
+        setSuggestionLoader(true); setSynonymsSuggestionsList([]);
+        setShowSynonymSuggestions(true);
+        // setSynonym(q); 
+        console.log(`q: ${q} , Word: ${word}`);
+        if (word.length == 0) {
+            setSynonymsSuggestionsList(null); setSuggestionLoader(false);
+            return
+        }
+        await db.transaction((tx) => {
+            tx.executeSql(
+                `select * from KeyWords JOIN Synonyms on KeyWords.KID=Synonyms.KID WHERE Word like '${word}' AND Synonym like '${q}%'`,
+                [],
+                (tx, results) => {
+                    var temp = [];
+                    console.log(results.rows.length);
+                    for (let i = 0; i < results.rows.length; ++i) {
+                        let obj = {
+                            id: results.rows.item(i).SID,
+                            title: results.rows.item(i).Synonym
+                        }
+                        console.log('obj', obj);
+                        if (obj.title.length > 0)
+                            temp.push(obj);
+                    }
+                    setSynonymsSuggestionsList(temp);
+                }
+            );
+        });
+        console.log('end');
+        setSuggestionLoader(false);
+    }
+
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -128,36 +206,81 @@ const Synonyms = () => {
                         <Text style={styles.text}>Word</Text>
                         <TextInput
                             style={styles.input}
-                            onChangeText={(txt) => setWord(txt)}
+                            value={word}
+                            onChangeText={(txt) => { setWord(txt),setShowWordSuggestions(true), getWordSuggestions(txt) }}
                             placeholder="Enter Word"
                         />
                     </View>
+                    {
+                        showWordSuggestions == true &&
+                            <FlatList 
+                                data={suggestionsList}
+                                keyExtractor={(item, index) => index}
+                                renderItem={(item, index) =>
+                                    <TouchableOpacity onPress={() => {setWord(item.item.title),setShowWordSuggestions(false)}}
+                                        style={{ flex: 1, width: '70%', alignSelf: 'flex-end', paddingHorizontal: 10, borderRadius: 5, marginBottom: 3, justifyContent: 'center', backgroundColor: '#fff' }}>
+                                        <Text style={{ color: '#000', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 12, fontSize: 12 }} >{item.item.title} </Text>
+                                    </TouchableOpacity>
+                                }
+                            />
+                    }
+
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={styles.text}>Synonym</Text>
                         <TextInput
                             style={styles.input}
-                            onChangeText={(txt) => setSynonym(txt)}
+                            value={synonym}
+                            onChangeText={(txt) => { setSynonym(txt), getSynonymsSuggestions(txt) }}
                             placeholder="Enter Synonyms"
-                        />
+                            onFocus={()=>getSynonymsSuggestions(synonym)}
+                        /> 
                     </View>
-
+                    {
+                        showSynonymSuggestions == true &&
+                        <View >
+                            <FlatList 
+                                data={synonymsSuggestionsList}
+                                keyExtractor={(item, index) => index}
+                                renderItem={(item, index) =>
+                                    <TouchableOpacity onPress={() =>{ setSynonym(item.item.title),setShowSynonymSuggestions(false)}}
+                                        style={{ flex: 1, width: '70%', alignSelf: 'flex-end', paddingHorizontal: 10, borderRadius: 5, marginBottom: 3, justifyContent: 'center', backgroundColor: '#fff' }}>
+                                        <Text style={{ color: 'green', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 12, fontSize: 12 }} >{item.item.title} </Text>
+                                    </TouchableOpacity>
+                                }
+                            />
+                        </View>
+                    }
                     <TouchableOpacity onPress={() => addSynonym()}
                         style={styles.button}
                     >
                         <Text style={styles.buttonText}> Add Synonyms </Text>
                     </TouchableOpacity>
                 </View>
-
+{/* ------------------------------------------------------------ SECOND CARD -------------------------------------------------------------- */}
                 <View style={styles.card}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={styles.text}>Word</Text>
                         <TextInput
                             style={styles.input}
                             value={word1}
-                            onChangeText={(txt) => setWord1(txt)}
+                            onChangeText={(txt) => { setWord1(txt),setShowWordSuggestions1(true) ,getWordSuggestions(txt) }}
                             placeholder="Enter Word"
                         />
                     </View>
+                    {
+                        showWordSuggestions1 == true &&
+                            <FlatList 
+                                data={suggestionsList}
+                                keyExtractor={(item, index) => index}
+                                renderItem={(item, index) =>
+                                    <TouchableOpacity onPress={() => {setWord1(item.item.title),setShowWordSuggestions1(false)}}
+                                        style={{ flex: 1, width: '70%', alignSelf: 'flex-end', paddingHorizontal: 15, borderRadius: 5, marginBottom: 3, justifyContent: 'center', backgroundColor: '#fff' }}>
+                                        <Text style={{ color: '#000', fontWeight: 'bold', backgroundColor: '#fff', paddingVertical: 12, fontSize: 12 }} >{item.item.title} </Text>
+                                    </TouchableOpacity>
+                                }
+                            />
+                    }
+
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Text style={styles.text}>Swaping Word</Text>
                         <TextInput

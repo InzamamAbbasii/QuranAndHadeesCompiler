@@ -28,7 +28,7 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <StatusBar backgroundColor={'#28D6C0'} />
+      <StatusBar backgroundColor={'#185425'} />
       <Stack.Navigator>
         <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={Home} options={{

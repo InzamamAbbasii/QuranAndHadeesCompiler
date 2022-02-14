@@ -414,12 +414,16 @@ const Home = ({ navigation }) => {
   }
   return (
     <ScrollView style={styles.container}>
-      <View style={{backgroundColor:'#185425',paddingVertical:30,
-      borderWidth:5,borderTopWidth:0,borderColor:'gray',
-      borderBottomLeftRadius:40,borderBottomRightRadius:40}}>
-        <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 40, textAlign: 'center', marginBottom: 20 }}>
-          Quran,Hadees And Bible Compiler
-        </Text>
+      <View style={{ backgroundColor: '#185425', 
+        borderWidth: 5, borderTopWidth: 0, borderColor: 'gray',borderBottomLeftRadius: 40, borderBottomRightRadius: 40
+        }}>
+      <View style={{
+       paddingVertical: 30,borderWidth: 3, borderTopWidth: 0, borderColor: '#000',borderBottomLeftRadius: 35, borderBottomRightRadius: 35
+      }}>
+          <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 40, textAlign: 'center', marginBottom: 20 }}>
+            Quran,Hadees And Bible Compiler
+          </Text>
+        </View>
       </View>
 
       <IModal
@@ -482,7 +486,7 @@ const Home = ({ navigation }) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity style={{ flex: 1, margin: 5 }}   onPress={() => navigation.navigate('Synonyms')}>
+        <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => navigation.navigate('Synonyms')}>
           <Image
             source={require('../assets/images/Synonyms11.png')}
             style={styles.imageStyle}
