@@ -589,83 +589,83 @@ const SearchIndexes = ({ navigation }) => {
                     var temp = [];
                     console.log('sys ', results.rows.length);
                     if (results.rows.length > 0) {
-                    for (let i = 0; i < results.rows.length; ++i)
-                        temp.push(results.rows.item(i).Synonym);
-                    // console.log(temp);
-                    var arr = [];
-                    temp.forEach((element, index) => {
-                        // `SELECT * FROM ${tableName} Where AyatText like '%${element}%'`,
-                        tx.executeSql(
-                            `SELECT * FROM ${tableName} WHERE AyatText like '${element} %' or AyatText like'% ${element}' or AyatText like'% ${element} %' or AyatText like '${element}' or AyatText REGEXP ' ${element}(,|;|.") ' or AyatText REGEXP ' (,|;|.")${element} '`,
-                            [],
-                            (tx, results) => {
-                                let rowsLength = results.rows.length;
-                                setSearchArray(data => [...data, { Syn: element }]);
-                                lst.push(element);
-                                let searchWord = element;
-                                // console.log(element, rowsLength);
-                                for (let i = 0; i < results.rows.length; ++i) {
-                                    let found = arr.some(s => s.Id == results.rows.item(i).Id);
-                                    if (found == false) {
-                                        arr.push(results.rows.item(i));
+                        for (let i = 0; i < results.rows.length; ++i)
+                            temp.push(results.rows.item(i).Synonym);
+                        temp = [...new Set(temp)];
+                        var arr = [];
+                        temp.forEach((element, index) => {
+                            // `SELECT * FROM ${tableName} Where AyatText like '%${element}%'`,
+                            tx.executeSql(
+                                `SELECT * FROM ${tableName} WHERE AyatText like '${element} %' or AyatText like'% ${element}' or AyatText like'% ${element} %' or AyatText like '${element}' or AyatText REGEXP ' ${element}(,|;|.") ' or AyatText REGEXP ' (,|;|.")${element} '`,
+                                [],
+                                (tx, results) => {
+                                    let rowsLength = results.rows.length;
+                                    setSearchArray(data => [...data, { Syn: element }]);
+                                    lst.push(element);
+                                    let searchWord = element;
+                                    // console.log(element, rowsLength);
+                                    for (let i = 0; i < results.rows.length; ++i) {
+                                        let found = arr.some(s => s.Id == results.rows.item(i).Id);
+                                        if (found == false) {
+                                            arr.push(results.rows.item(i));
+                                        }
                                     }
-                                }
-                                if (arr.length > 10) {
-                                    setDataCopy(arr);
-                                } else if (arr.length < 10 && index == temp.length - 1) {
-                                    setDataCopy(arr);
-                                }
-                                if (arr.length == 0 && index == temp.length - 1) {
-                                    alert('No record found.')
-                                }
-                                // if (rowsLength > 0) {
-                                //     if (rowsLength > 2) {
-                                //         for (let index = 0; index < 2; index++) {
-                                //             const element = arr[index];
-                                //             let found = data.some(s => s.Id == element.Id);
-                                //             if (found == false) {
-                                //                 setData(data => [...data,
-                                //                 {
-                                //                     Id: element.Id,
-                                //                     SurahId: element.SurahId,
-                                //                     AyatId: element.AyatId,
-                                //                     AyatText: element.AyatText,
-                                //                     SearchWord: text,
-                                //                 }
-                                //                 ]);
-                                //             }
-                                //         }
-                                //     }
-                                // }
-                                //     // else {
-                                //     // arr.forEach(element => {
-                                //     //     let found = data.some(s => s.Id == element.Id);
-                                //     //     if (found == false) {
-                                //     //         setData(data => [...data,
-                                //     //         {
-                                //     //             Id: element.Id,
-                                //     //             SurahId: element.SurahId,
-                                //     //             AyatId: element.AyatId,
-                                //     //             AyatText: element.AyatText,
-                                //     //             SearchWord: text,
-                                //     //         }
-                                //     //         ]);
-                                //     //         setDataCopy(data => [...data,
-                                //     //             {
-                                //     //                 Id: element.Id,
-                                //     //                 SurahId: element.SurahId,
-                                //     //                 AyatId: element.AyatId,
-                                //     //                 AyatText: element.AyatText,
-                                //     //                 SearchWord: text,
-                                //     //             }
-                                //     //             ]);
-                                //     //     }
-                                //     // });
-                                //     // }
-                                setIsFetched(false);
-                                // }
-                            });
-                    });
+                                    if (arr.length > 10) {
+                                        setDataCopy(arr);
+                                    } else if (arr.length < 10 && index == temp.length - 1) {
+                                        setDataCopy(arr);
+                                    }
+                                    if (arr.length == 0 && index == temp.length - 1) {
+                                        alert('No record found.')
+                                    }
+                                    // if (rowsLength > 0) {
+                                    //     if (rowsLength > 2) {
+                                    //         for (let index = 0; index < 2; index++) {
+                                    //             const element = arr[index];
+                                    //             let found = data.some(s => s.Id == element.Id);
+                                    //             if (found == false) {
+                                    //                 setData(data => [...data,
+                                    //                 {
+                                    //                     Id: element.Id,
+                                    //                     SurahId: element.SurahId,
+                                    //                     AyatId: element.AyatId,
+                                    //                     AyatText: element.AyatText,
+                                    //                     SearchWord: text,
+                                    //                 }
+                                    //                 ]);
+                                    //             }
+                                    //         }
+                                    //     }
+                                    // }
+                                    //     // else {
+                                    //     // arr.forEach(element => {
+                                    //     //     let found = data.some(s => s.Id == element.Id);
+                                    //     //     if (found == false) {
+                                    //     //         setData(data => [...data,
+                                    //     //         {
+                                    //     //             Id: element.Id,
+                                    //     //             SurahId: element.SurahId,
+                                    //     //             AyatId: element.AyatId,
+                                    //     //             AyatText: element.AyatText,
+                                    //     //             SearchWord: text,
+                                    //     //         }
+                                    //     //         ]);
+                                    //     //         setDataCopy(data => [...data,
+                                    //     //             {
+                                    //     //                 Id: element.Id,
+                                    //     //                 SurahId: element.SurahId,
+                                    //     //                 AyatId: element.AyatId,
+                                    //     //                 AyatText: element.AyatText,
+                                    //     //                 SearchWord: text,
+                                    //     //             }
+                                    //     //             ]);
+                                    //     //     }
+                                    //     // });
+                                    //     // }
+                                    setIsFetched(false);
+                                    // }
+                                });
+                        });
                     } else {
                         console.log('else executed');
                         setSearchArray(data => [...data, { Syn: text }]);
@@ -735,6 +735,7 @@ const SearchIndexes = ({ navigation }) => {
                     if (results.rows.length > 0) {
                         for (let i = 0; i < results.rows.length; ++i)
                             temp.push(results.rows.item(i).Synonym);
+                        temp = [...new Set(temp)];
                         var arr = [];
                         temp.forEach((element, index) => {
                             // setSearchArray(txt => [...txt, { element }]);
@@ -808,6 +809,8 @@ const SearchIndexes = ({ navigation }) => {
                     if (results.rows.length > 0) {
                         for (let i = 0; i < results.rows.length; ++i)
                             temp.push(results.rows.item(i).Synonym);
+                        temp = [...new Set(temp)];
+                        console.log(temp);
                         var arr = [];
                         temp.forEach(element => {
                             let searchWord = element;
@@ -964,9 +967,9 @@ const SearchIndexes = ({ navigation }) => {
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
                             <TextInput style={styles.input}
+                                value={search}
                                 onChangeText={(text) => setSearch(text)}
                                 placeholder={'search here...'} placeholderTextColor={'gray'} />
-
                             {/* {
                                 isFetched == true ? (
                                     <TextInput style={styles.input}

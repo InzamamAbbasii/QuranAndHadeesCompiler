@@ -398,6 +398,144 @@ const Home = ({ navigation }) => {
     }
   }
 
+  const ReadYousaf_Ali = async () => {
+    console.log('read Yousaf_Ali');
+    setModalVisible(false);
+    try {
+      await db.transaction(function (txn) {
+        txn.executeSql(
+          "SELECT name FROM sqlite_master WHERE type='table' AND name='Yousaf_Ali'",
+          [],
+          function (tx, res) {
+            console.log('item:', res.rows.length);
+            if (res.rows.length == 0) {
+              setModalVisible(true);
+              // TODO:if table is not created it will create new table otherwise it will do nothing.
+              // txn.executeSql('DROP TABLE IF EXISTS Yousaf-Ali', []);
+              txn.executeSql('DROP TABLE IF EXISTS Yousaf_Ali', []);
+              txn.executeSql(
+                'CREATE TABLE IF NOT EXISTS Yousaf_Ali(Id INTEGER PRIMARY KEY AUTOINCREMENT,ChapterNo TEXT,ChapterName TEXT ,SurahId INT, AyatId INT, AyatText TEXT)',
+                []
+              );
+              // TODO;read data from file and store into database
+              RNFS.readFileAssets('YUSUFALI.TXT', 'ascii').then((res) => {
+                console.log('..................................');
+                let newFile = res.split('\n');
+                let startingIndex = 0;
+                for (let index = 0; index < newFile.length; index++) {
+                  const element = newFile[index];
+                  if (element.match('001')) {
+                    startingIndex = index;
+                    break;
+                  }
+                }
+                let data = [];
+                let chapterno, chaptername;
+                let Chapterlist = [];
+                for (let index = startingIndex; index < newFile.length; index++) {
+                  const element = newFile[index];
+                  if (newFile[index].length > 1) {
+                    if (element.match('CHAPTER NO.')) {
+                      //  data.push(element);
+
+                      [chaptername, chapterno] = element.split('CHAPTER NO.');
+                      console.log(chaptername, chapterno.trim());
+                      // console.log(a);
+
+                      // console.log(chaptername);
+                      // console.log(chapterno.trim());
+                      // element=chapterno.trim()+'.'+chaptername+'.'+element;
+                      // console.log(element);
+
+                      // console.log(a);
+                      // let chaptername=a.join(' ');
+                      //  let chaptername=a.replace(',' ');
+                      // console.log(chaptername);
+                    }
+                    else if (element.match(/^\d/)) {
+                      //  console.log(chaptername,chapterno);
+                      let str = chapterno.concat('-', chaptername);
+                      str = str.concat(':', element);
+                      str = str.trim();
+                      //  console.log(str);
+                      // // Return true
+                      data.push(str);
+                    } else {
+
+                      let i = data.length - 1;
+                      let newText = JSON.stringify(element);
+                      let oldText = JSON.stringify(data[i]);
+                      let str = '';
+                      str = oldText.concat(' ', newText);
+                      let finalStr = str.replace(/\\r|"/g, '');
+                      data.pop();
+                      data.push(finalStr);
+                    }
+                  }
+                }
+                //  console.log(data);
+                let words = [];
+                for (let i = 0; i < data.length; i++) {
+                  let ele = data[i];
+                  let [chapterdetail, ...Otherdata] = ele.split(":");
+
+                  let [chapterno, chaptername] = chapterdetail.split('-')
+                  let [first, ...second] = Otherdata.toString().split(" ");
+                  let [surah, ayat] = first.split('.');
+                  second = second.join(" ")
+                  // console.log(chapterdetail);
+                  // console.log(surah,ayat);
+                  // console.log(second);
+                  let obj = {};
+                  obj.ChapterName = chaptername;
+                  obj.ChapterNo = chapterno;
+                  obj.SurahId = surah;
+                  obj.AyatId = ayat;
+                  obj.AyatText = JSON.stringify(second);
+                  words.push(obj);
+                  // console.log(obj);
+                }
+
+                // console.log(words);
+                let per = 0;
+                words.forEach((element, index) => {
+                  //  console.log(element.ChapterNo,element.ChapterName,element.SurahId, element.AyatId, JSON.parse(element.AyatText));
+                  // TODO:Store file data to database
+                  db.transaction(function (tx) {
+                    tx.executeSql(
+                      'INSERT INTO Yousaf_Ali (ChapterNo,ChapterName,SurahId, AyatId,AyatText) VALUES (?,?,?,?,?)',
+                      [element.ChapterNo, element.ChapterName, element.SurahId, element.AyatId, JSON.parse(element.AyatText)],
+                      (tx, results) => {
+                        if (results.rowsAffected > 0) {
+                          per = ((results.insertId / words.length) * 100).toFixed(0);
+                          setPercentage(per);
+                          setTotalData(words.length); setSavedData(results.insertId);
+                          console.log(`${per}% Data Stored Successfully! , Inserted ID : ${results.insertId}`);
+                        } else alert('Something went worng...');
+                      }
+                    );
+                  });
+                  // ............END OF STORING DATA TO DATABASE.............
+                });
+                //   navigation.navigate('Yousaf_Ali');
+
+              });
+              // alert('download completed');
+              console.log('end storing Yousaf_Ali Data.');
+              // ------------------------------------------------
+            } else {
+              console.log('Do nothing going to next screen..');
+              navigation.navigate('Yousaf_AliChapterList');
+            }
+          }
+        );
+      });
+    } catch (error) {
+      alert(error)
+    }
+  }
+
+
   const handleCancel = () => {
     setPercentage(0);
     setSavedData(0);
@@ -414,12 +552,13 @@ const Home = ({ navigation }) => {
   }
   return (
     <ScrollView style={styles.container}>
-      <View style={{ backgroundColor: '#185425', 
-        borderWidth: 5, borderTopWidth: 0, borderColor: 'gray',borderBottomLeftRadius: 40, borderBottomRightRadius: 40
-        }}>
       <View style={{
-       paddingVertical: 30,borderWidth: 3, borderTopWidth: 0, borderColor: '#000',borderBottomLeftRadius: 35, borderBottomRightRadius: 35
+        backgroundColor: '#185425',
+        borderWidth: 5, borderTopWidth: 0, borderColor: 'gray', borderBottomLeftRadius: 40, borderBottomRightRadius: 40
       }}>
+        <View style={{
+          paddingVertical: 30, borderWidth: 3, borderTopWidth: 0, borderColor: '#000', borderBottomLeftRadius: 35, borderBottomRightRadius: 35
+        }}>
           <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 40, textAlign: 'center', marginBottom: 20 }}>
             Quran,Hadees And Bible Compiler
           </Text>
@@ -491,6 +630,18 @@ const Home = ({ navigation }) => {
             source={require('../assets/images/Synonyms11.png')}
             style={styles.imageStyle}
           />
+        </TouchableOpacity>
+
+      </View>
+
+      <View style={{ flexDirection: 'row', margin: 10, }}>
+
+        <TouchableOpacity style={{ flex: 1, margin: 5 }} onPress={() => ReadYousaf_Ali()}>
+          <Image
+            source={require('../assets/images/Yousaf.png')}
+            style={[styles.imageStyle, { backgroundColor: '#ccc' }]}
+          />
+
         </TouchableOpacity>
 
       </View>

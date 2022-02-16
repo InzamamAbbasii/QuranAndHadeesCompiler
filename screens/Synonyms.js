@@ -4,7 +4,7 @@ import { openDatabase } from 'react-native-sqlite-storage';
 import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown';
 import Feather from 'react-native-vector-icons/Feather';
 
-const Synonyms = () => {
+const Synonyms = ({navigation,route}) => {
     var db = openDatabase({ name: 'ReadFile.db', createFromLocation: 1 });
 
     const [word, setWord] = useState('');
@@ -102,10 +102,10 @@ const Synonyms = () => {
 
         }
     }
-    useEffect(() => {
-         getKeyWords();
-        //   getSynonyms();
-    }, [])
+    // useEffect(() => {
+    //     //  getKeyWords();
+    //     //   getSynonyms();
+    // }, [])
     const getKeyWords = async () => {
         db.transaction((tx) => {
             tx.executeSql(
@@ -254,6 +254,11 @@ const Synonyms = () => {
                         style={styles.button}
                     >
                         <Text style={styles.buttonText}> Add Synonyms </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('AllWords')}
+                        style={[styles.button,{backgroundColor:'blue'}]}
+                    >
+                        <Text style={styles.buttonText}> View Synonyms </Text>
                     </TouchableOpacity>
                 </View>
 {/* ------------------------------------------------------------ SECOND CARD -------------------------------------------------------------- */}

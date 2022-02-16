@@ -8,11 +8,11 @@ import * as Progress from 'react-native-progress';
 import { log } from "react-native-reanimated";
 const Quran = ({ navigation, route }) => {
     LogBox.ignoreLogs(['new NativeEventEmitter']);
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            title: 'Surah ' + route.params.SurahId.toString()
-        })
-    }, [])
+    // useLayoutEffect(() => {
+    //     navigation.setOptions({
+    //         title: 'Surah ' + route.params.SurahId.toString()
+    //     })
+    // }, [])
     const [data, setData] = useState([]);
     const [isFetched, setIsFetched] = useState(true);
     const [percentage, setPercentage] = useState(0);
@@ -156,28 +156,12 @@ const Quran = ({ navigation, route }) => {
 
         <View style={styles.container}>
             {isFetched == true ? (
-                percentage == 0 ? (
-                    <View style={[styles.container, styles.horizontal]}>
-                        <ActivityIndicator size="large" color="red" />
-                        {/* <Progress.Bar progress={0.3} width={200} height={10} /> */}
-                    </View>
-                ) : (
-                    <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{savedData}/{totalData}</Text>
-                        <CircularProgress
-                            value={percentage}
-                            radius={120}
-                            duration={2000}
-                            textColor={'red'}
-                            maxValue={100}
-                            title={'%'}
-                            titleColor={'red'}
-                            titleStyle={{ fontWeight: 'bold' }}
-                        />
-                    </View>
-                )
+                <View style={[styles.container, styles.horizontal]}>
+                    <ActivityIndicator size="large" color="red" />
+                    {/* <Progress.Bar progress={0.3} width={200} height={10} /> */}
+                </View>
             ) : (
-                <FlatList showsVerticalScrollIndicator={false}
+                <FlatList showsVerticalScrollIndicator={false} 
                     data={data}
                     keyExtractor={(item, index) => index}
                     initialNumToRender={10}
@@ -185,10 +169,9 @@ const Quran = ({ navigation, route }) => {
                     windowSize={10}
                     renderItem={(item, index) =>
                         <View
-                            style={{ flex: 1, width: '97%', alignSelf: 'center ', borderRadius: 8, elevation: 5, marginBottom: 10, padding: 10, backgroundColor: '#58c7be' }}>
+                            style={{ flex: 1,borderRadius: 8, elevation: 5, marginBottom: 10, padding: 10, backgroundColor: '#58c7be' }}>
                             <Text style={{ color: 'black', fontWeight: 'bold', backgroundColor: '#58c7be', paddingVertical: 10, fontSize: 20 }} >Surah No {item.item.SurahId} : Ayat No {item.item.AyatId}</Text>
-
-                                <Text style={{ fontSize: 20, color: '#222',flex:1 }}>{item.item.AyatText}</Text>
+                            <Text style={{ fontSize: 20, color: '#222', flex: 1 }}>{item.item.AyatText}</Text>
                         </View>
                     }
                 />

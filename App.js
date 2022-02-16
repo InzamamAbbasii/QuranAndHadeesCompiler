@@ -23,123 +23,51 @@ import JildList from './screens/JildList';
 import BibleChapterList from './screens/BibleChapterList';
 import IndexesTabs from './screens/IndexesTabs';
 import BibleBooksList from './screens/BibleBooksList';
+import AllSynonyms from './screens/AllSynonyms';
+import AllWords from './screens/AllWords';
+import Yousaf_Ali from './screens/Yousaf_Ali';
+import Yousaf_AliChapterList from './screens/Yousaf_AliChapterList';
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
       <StatusBar backgroundColor={'#185425'} />
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#185425',//#28D6C0' #f4511e
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      >
         <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Home" component={Home} options={{
-          headerShown: false,
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Hadees" component={Hadees} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Search" component={Search} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="SearchIndexes" component={SearchIndexes} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Synonyms" component={Synonyms} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="ReadFile" component={ReadFile} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Quran" component={Quran} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Bible" component={Bible} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Quran_StopWords" component={Quran_StopWords} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Hadees_StopWords" component={Hadees_StopWords} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Bible_StopWords" component={Bible_StopWords} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="Detail" component={Detail} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="AddSynonyms" component={AddSynonyms} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="SurahList" component={SurahList} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="JildList" component={JildList} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="BibleChapterList" component={BibleChapterList} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="IndexesTabs" component={IndexesTabs} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
-        <Stack.Screen name="BibleBooksList" component={BibleBooksList} options={{
-          headerStyle: { backgroundColor: '#28D6C0' }, headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }} />
+        <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+        <Stack.Screen name="Hadees" component={Hadees} />
+        <Stack.Screen name="Search" component={Search} />
+        <Stack.Screen name="SearchIndexes" component={SearchIndexes} />
+        <Stack.Screen name="Synonyms" component={Synonyms} />
+        <Stack.Screen name="ReadFile" component={ReadFile} />
+        <Stack.Screen name="Quran" component={Quran} />
+        <Stack.Screen name="Bible" component={Bible} />
+        <Stack.Screen name="Quran_StopWords" component={Quran_StopWords} />
+        <Stack.Screen name="Hadees_StopWords" component={Hadees_StopWords} />
+        <Stack.Screen name="Bible_StopWords" component={Bible_StopWords} />
+        <Stack.Screen name="Detail" component={Detail} />
+        <Stack.Screen name="AddSynonyms" component={AddSynonyms} />
+        <Stack.Screen name="SurahList" component={SurahList} />
+        <Stack.Screen name="JildList" component={JildList} />
+        <Stack.Screen name="BibleChapterList" component={BibleChapterList} />
+        <Stack.Screen name="IndexesTabs" component={IndexesTabs} />
+        <Stack.Screen name="BibleBooksList" component={BibleBooksList} />
+        <Stack.Screen name="AllWords" component={AllWords} />
+        <Stack.Screen name="AllSynonyms" component={AllSynonyms} />
+        <Stack.Screen name="Yousaf_Ali" component={Yousaf_Ali} />
+        <Stack.Screen name="Yousaf_AliChapterList" component={Yousaf_AliChapterList} />
+
       </Stack.Navigator>
 
     </NavigationContainer>
